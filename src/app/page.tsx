@@ -1,69 +1,220 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import React, { useState } from 'react'
+import { AureliaHeader } from '@/components/aurelia/AureliaHeader'
+import { HeroAndPersonalized } from '@/components/aurelia/HeroAndPersonalized'
+import { StoreDiscovery, BrandData, luxuryBrandsList } from '@/components/aurelia/StoreDiscovery'
+import { StoreDetailModal } from '@/components/aurelia/StoreDetailModal'
+import { InteractiveMallMap } from '@/components/aurelia/InteractiveMallMap'
+import { DiningExperience, RestaurantData, luxuryRestaurants } from '@/components/aurelia/DiningExperience'
+import { DiningReservationModal } from '@/components/aurelia/DiningReservationModal'
+import { ExclusiveOffers } from '@/components/aurelia/ExclusiveOffers'
+import { ExperiencesSection } from '@/components/aurelia/ExperiencesSection'
+import { SmartParking } from '@/components/aurelia/SmartParking'
+import { VipMembership } from '@/components/aurelia/VipMembership'
+import { DigitalWalletModal } from '@/components/aurelia/DigitalWalletModal'
+import { UserProfileDrawer } from '@/components/aurelia/UserProfileDrawer'
+import { AuraConciergeModal } from '@/components/aurelia/AuraConciergeModal'
+import { AureliaSearchModal } from '@/components/aurelia/AureliaSearchModal'
+import { AureliaFooter } from '@/components/aurelia/AureliaFooter'
+import { ProductDetailModal } from '@/components/aurelia/ProductDetailModal'
+import { ScrollReveal } from '@/components/aurelia/ScrollReveal'
+import { Product } from '@/data/types'
+import {
+  Sparkles,
+  Home,
+  Compass,
+  Tag,
+  User,
+  ShoppingBag,
+} from 'lucide-react'
+
+export default function AureliaHomePage() {
+  // Modal & Drawer State Management
+  const [selectedStore, setSelectedStore] = useState<BrandData | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [selectedRestaurant, setSelectedRestaurant] = useState<RestaurantData | null>(null)
+  const [conciergeOpen, setConciergeOpen] = useState(false)
+  const [profileOpen, setProfileOpen] = useState(false)
+  const [walletOpen, setWalletOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+
+  // Quick navigation handlers
+  const handleSelectStoreById = (storeId: string) => {
+    const found = luxuryBrandsList.find((b) => b.id === storeId)
+    if (found) {
+      setSelectedStore(found)
+    }
+  }
+
+  const handleNavigateToMap = (storeName: string, floor: string) => {
+    window.location.hash = '#map'
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen bg-[#08080a] text-[#fbf8f3] font-sans selection:bg-[#c5a059] selection:text-[#0a0a0c] relative">
+      {/* ── 02: SMART FLOATING HEADER ── */}
+      <AureliaHeader
+        onOpenConcierge={() => setConciergeOpen(true)}
+        onOpenProfile={() => setProfileOpen(true)}
+        onOpenSearch={() => setSearchOpen(true)}
+      />
+
+      {/* ── 01 & 03: CINEMATIC HERO & PERSONALIZED GOR KISHAN PORTAL ── */}
+      <HeroAndPersonalized
+        onSelectStore={handleSelectStoreById}
+        onOpenConcierge={() => setConciergeOpen(true)}
+        onOpenDining={() => setSelectedRestaurant(luxuryRestaurants[0])}
+        onOpenWallet={() => setWalletOpen(true)}
+      />
+
+      {/* ── 04: STORE DISCOVERY (THE COLLECTION) ── */}
+      <ScrollReveal>
+        <StoreDiscovery
+          onSelectStore={(store) => setSelectedStore(store)}
+          onSelectProduct={(prod) => setSelectedProduct(prod)}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </ScrollReveal>
+
+      {/* ── 07: INTERACTIVE 3D MALL MAP ── */}
+      <ScrollReveal>
+        <InteractiveMallMap onSelectStoreDetails={(store: any) => setSelectedStore(store)} />
+      </ScrollReveal>
+
+      {/* ── 08: LUXURY DINING EXPERIENCE ── */}
+      <ScrollReveal>
+        <DiningExperience
+          onReserveTable={(restaurant) => setSelectedRestaurant(restaurant)}
+        />
+      </ScrollReveal>
+
+      {/* ── 09: EXCLUSIVE OFFERS & CAMPAIGNS ── */}
+      <ScrollReveal>
+        <ExclusiveOffers />
+      </ScrollReveal>
+
+      {/* ── 10: EXPERIENCES (MORE THAN SHOPPING) ── */}
+      <ScrollReveal>
+        <ExperiencesSection />
+      </ScrollReveal>
+
+      {/* ── 11: SMART PARKING NAVIGATOR ── */}
+      <ScrollReveal>
+        <SmartParking />
+      </ScrollReveal>
+
+      {/* ── 12: VIP MEMBERSHIP (INNER CIRCLE) ── */}
+      <ScrollReveal>
+        <VipMembership onOpenWallet={() => setWalletOpen(true)} />
+      </ScrollReveal>
+
+      {/* ── FOOTER ── */}
+      <AureliaFooter />
+
+      {/* ── MODALS & DRAWERS ── */}
+      {/* 05: Store Detail Modal */}
+      <StoreDetailModal
+        store={selectedStore}
+        onClose={() => setSelectedStore(null)}
+        onNavigateToMap={handleNavigateToMap}
+      />
+
+      {/* Product Detail Modal */}
+      <ProductDetailModal
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        onNavigateToMap={handleNavigateToMap}
+        onSelectStoreByName={(storeName) => {
+          const found = luxuryBrandsList.find((b) => b.name.toLowerCase() === storeName.toLowerCase())
+          if (found) setSelectedStore(found)
+        }}
+      />
+
+      {/* 06: AI Concierge AURA */}
+      <AuraConciergeModal
+        isOpen={conciergeOpen}
+        onClose={() => setConciergeOpen(false)}
+        onNavigateMap={(target) => {
+          window.location.hash = target
+        }}
+      />
+
+      {/* 08: Dining Reservation Modal */}
+      <DiningReservationModal
+        restaurant={selectedRestaurant}
+        onClose={() => setSelectedRestaurant(null)}
+      />
+
+      {/* 13: Digital Wallet Modal */}
+      <DigitalWalletModal
+        isOpen={walletOpen}
+        onClose={() => setWalletOpen(false)}
+      />
+
+      {/* 14: User Profile Drawer */}
+      <UserProfileDrawer
+        isOpen={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        onOpenWallet={() => setWalletOpen(true)}
+        onOpenConcierge={() => setConciergeOpen(true)}
+      />
+
+      {/* Search Modal */}
+      <AureliaSearchModal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        onSelectStore={(store) => setSelectedStore(store)}
+        onSelectProduct={(prod) => setSelectedProduct(prod)}
+      />
+
+      {/* ── FLOATING AI CONCIERGE BUTTON (AURA) ── */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <button
+          onClick={() => setConciergeOpen(true)}
+          className="group relative flex items-center justify-center h-14 w-14 rounded-full bg-gradient-to-tr from-[#9a7837] via-[#c5a059] to-[#f3e7cf] shadow-[0_0_30px_rgba(197,160,89,0.5)] hover:shadow-[0_0_40px_rgba(197,160,89,0.8)] hover:scale-105 transition-all duration-500"
+          aria-label="Open AURA AI Concierge"
+          title="Consult Luxury Concierge AURA"
+        >
+          {/* Outer Pulsing Particle Ring */}
+          <span className="absolute -inset-1 rounded-full bg-[#c5a059]/30 blur-sm animate-pulse" />
+          
+          <div className="h-[92%] w-[92%] rounded-full bg-[#0a0a0c] flex items-center justify-center relative z-10">
+            <Sparkles className="h-6 w-6 text-[#e6ca85] group-hover:rotate-45 transition-transform duration-500" />
+          </div>
+
+          {/* Tooltip on hover */}
+          <span className="hidden md:block absolute right-16 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-[#c5a059]/30 text-[10px] font-sans tracking-widest text-[#fbf8f3] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Ask AURA
+          </span>
+        </button>
+      </div>
+
+      {/* ── 16: MOBILE BOTTOM LUXURY DOCK ── */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#08080a]/90 backdrop-blur-xl border-t border-white/10 px-6 py-3 flex items-center justify-between text-[10px] font-sans tracking-widest text-[#e8e2d8]/70">
+        <a href="#hero" className="flex flex-col items-center gap-1 hover:text-[#c5a059] transition-colors">
+          <Home className="h-4 w-4" />
+          <span>HOME</span>
+        </a>
+        <a href="#stores" className="flex flex-col items-center gap-1 hover:text-[#c5a059] transition-colors">
+          <ShoppingBag className="h-4 w-4" />
+          <span>STORES</span>
+        </a>
+        <a href="#map" className="flex flex-col items-center gap-1 hover:text-[#c5a059] transition-colors">
+          <Compass className="h-4 w-4 text-[#c5a059]" />
+          <span className="text-[#c5a059]">MAP</span>
+        </a>
+        <a href="#offers" className="flex flex-col items-center gap-1 hover:text-[#c5a059] transition-colors">
+          <Tag className="h-4 w-4" />
+          <span>OFFERS</span>
+        </a>
+        <button
+          onClick={() => setProfileOpen(true)}
+          className="flex flex-col items-center gap-1 hover:text-[#c5a059] transition-colors"
+        >
+          <User className="h-4 w-4" />
+          <span>PROFILE</span>
+        </button>
+      </div>
     </div>
-  );
+  )
 }

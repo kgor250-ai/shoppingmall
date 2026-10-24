@@ -1,0 +1,433 @@
+{
+  "stores": [
+    {
+      "id": "zara-flagship",
+      "name": "Zara",
+      "floor": "G",
+      "wing": "South Wing",
+      "shopNumber": "G-121"
+    },
+    {
+      "id": "hm-flagship",
+      "name": "H&M",
+      "floor": "G",
+      "wing": "Central Atrium",
+      "shopNumber": "G-104"
+    },
+    {
+      "id": "levis-store",
+      "name": "Levi's",
+      "floor": "2",
+      "wing": "Central Atrium",
+      "shopNumber": "2-149"
+    },
+    {
+      "id": "lifestyle-flagship",
+      "name": "Lifestyle",
+      "floor": "2",
+      "wing": "West Wing",
+      "shopNumber": "2-168"
+    },
+    {
+      "id": "westside-store",
+      "name": "Westside",
+      "floor": "3",
+      "wing": "Central Atrium",
+      "shopNumber": "3-174"
+    },
+    {
+      "id": "pantaloons-store",
+      "name": "Pantaloons",
+      "floor": "2",
+      "wing": "Central Atrium",
+      "shopNumber": "2-189"
+    },
+    {
+      "id": "max-fashion",
+      "name": "Max Fashion",
+      "floor": "1",
+      "wing": "North Wing",
+      "shopNumber": "1-115"
+    },
+    {
+      "id": "luxe-atelier",
+      "name": "Luxe Atelier",
+      "floor": "Floor 02 · Suite 210"
+    },
+    {
+      "id": "apple-flagship",
+      "name": "Apple Flagship",
+      "floor": "2",
+      "wing": "West Wing",
+      "shopNumber": "2-133"
+    },
+    {
+      "id": "samsung-store",
+      "name": "Samsung Experience Store",
+      "floor": "1",
+      "wing": "West Wing",
+      "shopNumber": "1-168"
+    },
+    {
+      "id": "sony-center",
+      "name": "Sony Center",
+      "floor": "1",
+      "wing": "West Wing",
+      "shopNumber": "1-143"
+    },
+    {
+      "id": "croma-megastore",
+      "name": "Croma",
+      "floor": "2",
+      "wing": "East Wing",
+      "shopNumber": "2-142"
+    },
+    {
+      "id": "reliance-digital",
+      "name": "Reliance Digital",
+      "floor": "2",
+      "wing": "Central Atrium",
+      "shopNumber": "2-114"
+    },
+    {
+      "id": "bang-olufsen",
+      "name": "Bang & Olufsen",
+      "floor": "Floor 02 · Tech Atelier Suite 224"
+    },
+    {
+      "id": "sephora-flagship",
+      "name": "Sephora",
+      "floor": "2",
+      "wing": "East Wing",
+      "shopNumber": "2-117"
+    },
+    {
+      "id": "nykaa-luxe",
+      "name": "Nykaa Luxe",
+      "floor": "1",
+      "wing": "West Wing",
+      "shopNumber": "1-123"
+    },
+    {
+      "id": "the-body-shop",
+      "name": "The Body Shop",
+      "floor": "2",
+      "wing": "West Wing",
+      "shopNumber": "2-183"
+    },
+    {
+      "id": "forest-essentials",
+      "name": "Forest Essentials",
+      "floor": "G",
+      "wing": "East Wing",
+      "shopNumber": "G-187"
+    },
+    {
+      "id": "health-glow",
+      "name": "Health & Glow",
+      "floor": "2",
+      "wing": "South Wing",
+      "shopNumber": "2-116"
+    },
+    {
+      "id": "maison-francis",
+      "name": "Maison Francis Kurkdjian",
+      "floor": "Ground Floor · Parfumerie Row"
+    },
+    {
+      "id": "tanishq-store",
+      "name": "Tanishq",
+      "floor": "G",
+      "wing": "Central Atrium",
+      "shopNumber": "G-134"
+    },
+    {
+      "id": "kalyan-jewellers",
+      "name": "Kalyan Jewellers",
+      "floor": "1",
+      "wing": "West Wing",
+      "shopNumber": "1-158"
+    },
+    {
+      "id": "malabar-gold",
+      "name": "Malabar Gold & Diamonds",
+      "floor": "1",
+      "wing": "East Wing",
+      "shopNumber": "1-187"
+    },
+    {
+      "id": "caratlane-store",
+      "name": "CaratLane",
+      "floor": "1",
+      "wing": "South Wing",
+      "shopNumber": "1-141"
+    },
+    {
+      "id": "senco-gold",
+      "name": "Senco Gold & Diamonds",
+      "floor": "1",
+      "wing": "West Wing",
+      "shopNumber": "1-103"
+    },
+    {
+      "id": "boucheron-salon",
+      "name": "Boucheron Paris",
+      "floor": "1",
+      "wing": "South Wing",
+      "shopNumber": "1-151"
+    },
+    {
+      "id": "audemars-piguet",
+      "name": "Audemars Piguet",
+      "floor": "Floor 01 · Horlogerie Wing"
+    },
+    {
+      "id": "fresh-mart-grocery",
+      "name": "Fresh Mart Grocery",
+      "floor": "Basement · Hypermarket Level B1"
+    },
+    {
+      "id": "nike-flagship",
+      "name": "Nike Flagship",
+      "floor": "1",
+      "wing": "Central Atrium",
+      "shopNumber": "1-149"
+    },
+    {
+      "id": "decathlon-sports",
+      "name": "Decathlon Sports",
+      "floor": "2",
+      "wing": "Central Atrium",
+      "shopNumber": "2-174"
+    },
+    {
+      "id": "under-armour",
+      "name": "Under Armour",
+      "floor": "Floor 02 · Suite 228"
+    },
+    {
+      "id": "hamleys-store",
+      "name": "Hamleys",
+      "floor": "2",
+      "wing": "Central Atrium",
+      "shopNumber": "2-149"
+    },
+    {
+      "id": "mothercare-store",
+      "name": "Mothercare",
+      "floor": "Floor 03 · Suite 308"
+    }
+  ],
+  "restaurants": [
+    {
+      "id": "lecrin-celeste",
+      "name": "L'Écrin Céleste",
+      "floor": "3",
+      "wing": "West Wing",
+      "shopNumber": "3-123"
+    },
+    {
+      "id": "matsue-omakase",
+      "name": "Matsue Ginza Omakase",
+      "floor": "2",
+      "wing": "East Wing",
+      "shopNumber": "2-137"
+    },
+    {
+      "id": "saffron-conservatory",
+      "name": "The Saffron Conservatory",
+      "floor": "G",
+      "wing": "West Wing",
+      "shopNumber": "G-123"
+    },
+    {
+      "id": "the-green-table",
+      "name": "The Green Table",
+      "floor": "3",
+      "wing": "North Wing",
+      "shopNumber": "3-160"
+    },
+    {
+      "id": "trattoria-bella-vista",
+      "name": "Trattoria Bella Vista",
+      "floor": "2",
+      "wing": "Central Atrium",
+      "shopNumber": "2-139"
+    },
+    {
+      "id": "mainland-dynasty",
+      "name": "Mainland Dynasty",
+      "floor": "3",
+      "wing": "South Wing",
+      "shopNumber": "3-161"
+    },
+    {
+      "id": "cafe-de-paris",
+      "name": "Café de Paris & Boulangerie",
+      "floor": "G",
+      "wing": "West Wing",
+      "shopNumber": "G-133"
+    },
+    {
+      "id": "smokehouse-grill",
+      "name": "Smokehouse Social Grill",
+      "floor": "2",
+      "wing": "Central Atrium",
+      "shopNumber": "2-174"
+    },
+    {
+      "id": "pierre-herme",
+      "name": "Pierre Hermé Haute Pâtisserie",
+      "floor": "G",
+      "wing": "South Wing",
+      "shopNumber": "G-121"
+    },
+    {
+      "id": "blue-tokai-roastery",
+      "name": "Blue Tokai Roastery & Brew Bar",
+      "floor": "2",
+      "wing": "Central Atrium",
+      "shopNumber": "2-139"
+    },
+    {
+      "id": "royal-punjab-tandoor",
+      "name": "Royal Punjab Tandoor",
+      "floor": "2",
+      "wing": "North Wing",
+      "shopNumber": "2-140"
+    },
+    {
+      "id": "gelato-milano",
+      "name": "Gelato Milano Artisanal Creamery",
+      "floor": "1",
+      "wing": "South Wing",
+      "shopNumber": "1-121"
+    }
+  ],
+  "entertainment": [
+    {
+      "id": "ent-01",
+      "name": "Smaaash VR & Immersion Arena",
+      "floor": "3",
+      "wing": "Central Atrium",
+      "shopNumber": "3-169"
+    },
+    {
+      "id": "ent-02",
+      "name": "Strike 10 Boutique Bowling Lounge",
+      "floor": "3",
+      "wing": "North Wing",
+      "shopNumber": "3-170"
+    },
+    {
+      "id": "ent-03",
+      "name": "Pixel Retro & Next-Gen Arcade",
+      "floor": "3",
+      "wing": "South Wing",
+      "shopNumber": "3-171"
+    },
+    {
+      "id": "ent-04",
+      "name": "Funky Monkey Adventure Play Zone",
+      "floor": "3",
+      "wing": "East Wing",
+      "shopNumber": "3-172"
+    },
+    {
+      "id": "ent-05",
+      "name": "Midnight Jazz & Vintage Krug Tasting",
+      "floor": "G",
+      "wing": "West Wing",
+      "shopNumber": "G-173"
+    },
+    {
+      "id": "ent-06",
+      "name": "Haute Couture Fall/Winter Runway 2026",
+      "floor": "G",
+      "wing": "Central Atrium",
+      "shopNumber": "G-174"
+    },
+    {
+      "id": "ent-07",
+      "name": "Venetian Glass & Mosaic Masterclass",
+      "floor": "G",
+      "wing": "North Wing",
+      "shopNumber": "G-175"
+    },
+    {
+      "id": "ent-08",
+      "name": "Odyssey Escape Rooms: The Vault of Versailles",
+      "floor": "Basement Level B1"
+    }
+  ],
+  "services": [
+    {
+      "id": "serv-01",
+      "name": "Urban Glow Luxury Hair Studio & Barberie",
+      "floor": "2",
+      "wing": "North Wing",
+      "shopNumber": "2-190"
+    },
+    {
+      "id": "serv-02",
+      "name": "Ananda Thai Herbal Spa & Wellness Suite",
+      "floor": "3",
+      "wing": "South Wing",
+      "shopNumber": "3-191"
+    },
+    {
+      "id": "serv-03",
+      "name": "QuickStitch Master Bespoke Tailoring & Alterations",
+      "floor": "2",
+      "wing": "East Wing",
+      "shopNumber": "2-192"
+    },
+    {
+      "id": "serv-04",
+      "name": "Apple Authorized Service & Screen Repair Clinic",
+      "floor": "2",
+      "wing": "West Wing",
+      "shopNumber": "2-193"
+    },
+    {
+      "id": "serv-05",
+      "name": "GadgetDoctor Electronics & Laptop Repair",
+      "floor": "2",
+      "wing": "Central Atrium",
+      "shopNumber": "2-194"
+    },
+    {
+      "id": "serv-06",
+      "name": "Steam & Press Eco Laundry & Dry Cleaners",
+      "floor": "P1",
+      "wing": "North Wing",
+      "shopNumber": "P1-195"
+    },
+    {
+      "id": "serv-07",
+      "name": "360° Express Eco Valet Car Spa & Ceramic Wash",
+      "floor": "2",
+      "wing": "South Wing",
+      "shopNumber": "2-196"
+    },
+    {
+      "id": "serv-08",
+      "name": "DHL & BlueDart International Express Mall Courier",
+      "floor": "G",
+      "wing": "East Wing",
+      "shopNumber": "G-197"
+    },
+    {
+      "id": "serv-09",
+      "name": "Studio Luxe Portrait & Biometric Visa Photography",
+      "floor": "1",
+      "wing": "West Wing",
+      "shopNumber": "1-198"
+    },
+    {
+      "id": "serv-10",
+      "name": "VIP Luggage Cloakroom & Porter Service",
+      "floor": "Ground Floor · Central Concierge Desk"
+    }
+  ]
+}

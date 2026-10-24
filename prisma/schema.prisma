@@ -1,0 +1,276 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String
+  phone        String?
+  status       String   @default("ACTIVE")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  stores       Store[]
+}
+
+model Floor {
+  id          String   @id @default(uuid())
+  code        String   @unique // e.g. G, 1, 2, 3
+  name        String
+  number      Int      @unique
+  description String?
+  category    String?
+  status      String   @default("ACTIVE")
+  elevation   Float?   @default(0)
+  mapImageUrl String?
+  mapWidth    Float?
+  mapHeight   Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  stores     Store[]
+  facilities Facility[]
+  nodes      NavigationNode[]
+}
+
+model Store {
+  id          String   @id @default(uuid())
+  name        String
+  storeNumber String   @unique
+  floor       String
+  floorData   Floor?   @relation(fields: [floor], references: [code])
+  categoryId  String
+  description String?
+  phone       String?
+  email       String?
+  monthlyRent Float
+  openingDate DateTime
+  status      String   @default("ACTIVE")
+
+  // 3D & Layout properties
+  positionX Float?
+  positionY Float?
+  positionZ Float?
+  wing      String?
+  brandName String?
+  logoUrl   String?
+  shopSize  Float?
+
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  ownerId    String?
+  complaints Complaint[]
+  employees  Employee[]
+  products   Product[]
+  rents      Rent[]
+  sales      Sale[]
+  stockTx    StockTransaction[]
+  category   Category           @relation(fields: [categoryId], references: [id])
+  owner      User?              @relation(fields: [ownerId], references: [id])
+}
+
+model Facility {
+  id          String   @id @default(uuid())
+  name        String
+  type        String   // "RESTROOM", "LIFT", "ESCALATOR", "STAIRS", "PARKING", "EXIT", "ENTRANCE", "INFO_DESK"
+  floorId     String
+  floor       Floor    @relation(fields: [floorId], references: [id])
+  positionX   Float?
+  positionY   Float?
+  positionZ   Float?
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model NavigationNode {
+  id          String   @id @default(uuid())
+  floorId     String
+  floor       Floor    @relation(fields: [floorId], references: [id])
+  positionX   Float
+  positionY   Float
+  positionZ   Float?
+  type        String   // "CORRIDOR", "STORE_ENTRANCE", "ELEVATOR", "STAIRS", "ESCALATOR", "ENTRANCE"
+  refId       String?  // ID of Store or Facility
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  edgesFrom   NavigationEdge[] @relation("NodeFrom")
+  edgesTo     NavigationEdge[] @relation("NodeTo")
+}
+
+model NavigationEdge {
+  id            String   @id @default(uuid())
+  fromNodeId    String
+  toNodeId      String
+  fromNode      NavigationNode @relation("NodeFrom", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toNode        NavigationNode @relation("NodeTo", fields: [toNodeId], references: [id], onDelete: Cascade)
+  distance      Float
+  weight        Float    @default(1.0)
+  isAccessible  Boolean  @default(true) // For wheelchair routing
+  type          String   @default("WALKING") // "WALKING", "ELEVATOR", "ESCALATOR", "STAIRS"
+  status        String   @default("ACTIVE")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([fromNodeId, toNodeId])
+}
+
+model Employee {
+  id          String   @id @default(uuid())
+  name        String
+  employeeId  String   @unique
+  phone       String?
+  email       String?
+  designation String
+  storeId     String
+  joiningDate DateTime
+  salary      Float
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  store       Store    @relation(fields: [storeId], references: [id])
+}
+
+model Customer {
+  id         String      @id @default(uuid())
+  name       String
+  phone      String?
+  email      String?
+  address    String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  complaints Complaint[]
+  sales      Sale[]
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  status      String    @default("ACTIVE")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+  stores      Store[]
+}
+
+model Product {
+  id           String             @id @default(uuid())
+  storeId      String
+  categoryId   String
+  name         String
+  sku          String             @unique
+  description  String?
+  costPrice    Float
+  sellingPrice Float
+  currentStock Int                @default(0)
+  minimumStock Int                @default(5)
+  unit         String             @default("pcs")
+  status       String             @default("ACTIVE")
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  category     Category           @relation(fields: [categoryId], references: [id])
+  store        Store              @relation(fields: [storeId], references: [id])
+  saleItems    SaleItem[]
+  stockTx      StockTransaction[]
+}
+
+model StockTransaction {
+  id            String   @id @default(uuid())
+  productId     String
+  storeId       String
+  type          String
+  quantity      Int
+  previousStock Int
+  newStock      Int
+  reason        String?
+  createdBy     String
+  createdAt     DateTime @default(now())
+  store         Store    @relation(fields: [storeId], references: [id])
+  product       Product  @relation(fields: [productId], references: [id])
+}
+
+model Sale {
+  id            String     @id @default(uuid())
+  invoiceNumber String     @unique
+  storeId       String
+  customerId    String?
+  createdBy     String
+  subtotal      Float
+  discount      Float      @default(0)
+  tax           Float      @default(0)
+  total         Float
+  paymentMethod String
+  paymentStatus String     @default("PAID")
+  status        String     @default("COMPLETED")
+  createdAt     DateTime   @default(now())
+  customer      Customer?  @relation(fields: [customerId], references: [id])
+  store         Store      @relation(fields: [storeId], references: [id])
+  items         SaleItem[]
+}
+
+model SaleItem {
+  id        String  @id @default(uuid())
+  saleId    String
+  productId String
+  quantity  Int
+  unitPrice Float
+  discount  Float   @default(0)
+  tax       Float   @default(0)
+  total     Float
+  product   Product @relation(fields: [productId], references: [id])
+  sale      Sale    @relation(fields: [saleId], references: [id])
+}
+
+model Rent {
+  id               String    @id @default(uuid())
+  storeId          String
+  month            Int
+  year             Int
+  amount           Float
+  dueDate          DateTime
+  paidDate         DateTime?
+  status           String    @default("PENDING")
+  paymentReference String?
+  notes            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  paymentMethod    String?
+  store            Store     @relation(fields: [storeId], references: [id])
+
+  @@unique([storeId, month, year])
+}
+
+model Complaint {
+  id          String    @id @default(uuid())
+  storeId     String
+  customerId  String?
+  subject     String
+  description String
+  priority    String    @default("MEDIUM")
+  status      String    @default("PENDING")
+  resolution  String?
+  resolvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  store       Store     @relation(fields: [storeId], references: [id])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String
+  action      String
+  module      String
+  recordId    String?
+  description String
+  createdAt   DateTime @default(now())
+}

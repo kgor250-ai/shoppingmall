@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shopping Mall Management System
+
+A complete, production-quality full-stack web application built for managing shopping malls, their stores, owners, inventory, and point-of-sale billing.
+
+## Technology Stack
+- **Frontend:** Next.js (App Router), React, Tailwind CSS, shadcn/ui, Lucide Icons
+- **Backend:** Next.js Server Actions, API Routes, Edge-compatible custom JWT Sessions (jose)
+- **Database:** SQLite (for zero-configuration local development) with Prisma ORM
+- **Authentication:** bcrypt password hashing + HTTP-only secure cookies
+
+## Features
+- **Admin Dashboard:** Manage all stores, assign store owners, track rent, view overall sales metrics.
+- **Store Owner Dashboard:** Complete inventory management and metrics scoped strictly to the assigned store.
+- **POS Billing System:** Fast search, cart management, subtotal/tax calculation, and database transaction-backed atomic checkout.
+- **Role-based Authorization:** Secure server-side validation ensuring users only access their authorized endpoints and data.
 
 ## Getting Started
 
-First, run the development server:
-
+### 1. Install Dependencies
+Run the following command to install required packages:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Configure Environment Variables
+Copy `.env.example` to `.env` if it doesn't already exist.
+```bash
+cp .env.example .env
+```
+The file uses a local SQLite database (`DATABASE_URL="file:./dev.db"`) out of the box.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Database Setup & Migrations
+Create the database schema by pushing it via Prisma:
+```bash
+npx prisma db push
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Seed Demo Data
+Populate the database with a system admin, a store, an owner, customers, and dummy stock:
+```bash
+npx tsx prisma/seed.ts
+```
 
-## Learn More
+### 5. Start the Development Server
+Launch the application:
+```bash
+npm run dev
+```
+Navigate to `http://localhost:3000` in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+## Demo Login Credentials
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The application is pre-seeded with the following roles:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**System Admin**
+- Email: `admin@example.com`
+- Password: `Admin@123`
 
-## Deploy on Vercel
+**Store Owner**
+- Email: `owner@example.com`
+- Password: `Owner@123`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## How Roles Work
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **ADMIN:** Has access to the `/admin` routes. Can manage users, owners, rent, create categories, and view all system activity. Admins cannot generate bills or manage store inventory directly.
+- **STORE_OWNER:** Has access to the `/store` routes. Can only manage products, stock, and sales related to the specific store they are assigned to. Any attempt to modify API routes or access other stores is blocked server-side using the `storeId` linked securely in their JWT session token.
