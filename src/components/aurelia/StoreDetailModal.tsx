@@ -85,6 +85,33 @@ export function StoreDetailModal({
 
               {/* Hero Overlay Details */}
               <div className="absolute bottom-10 left-8 md:left-14 right-8 z-10">
+                {/* Modal Breadcrumb Trail */}
+                <nav aria-label="Boutique path" className="flex items-center gap-1.5 text-[11px] font-sans tracking-wider text-[#e8e2d8]/60 mb-3">
+                  <button
+                    onClick={() => {
+                      onClose()
+                      window.location.hash = '#hero'
+                    }}
+                    className="hover:text-[#c5a059] transition-colors cursor-pointer"
+                  >
+                    Home
+                  </button>
+                  <span>→</span>
+                  <button
+                    onClick={() => {
+                      onClose()
+                      window.location.hash = '#stores'
+                    }}
+                    className="hover:text-[#c5a059] transition-colors cursor-pointer"
+                  >
+                    Stores
+                  </button>
+                  <span>→</span>
+                  <span className="text-[#c5a059] font-medium truncate max-w-[200px]" aria-current="page">
+                    {store.name}
+                  </span>
+                </nav>
+
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#c5a059]/20 border border-[#c5a059]/40 text-[10px] font-sans uppercase tracking-[0.28em] text-[#e6ca85] mb-4 backdrop-blur-md">
                   <Sparkles className="h-3 w-3" />
                   <span>

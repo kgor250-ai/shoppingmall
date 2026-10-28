@@ -38,6 +38,45 @@ export default function AureliaHomePage() {
   const [profileOpen, setProfileOpen] = useState(false)
   const [walletOpen, setWalletOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('hero')
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const hash = window.location.hash.replace('#', '')
+      if (hash) setActiveSection(hash)
+    }
+
+    const sections = [
+      'hero',
+      'personalized',
+      'stores',
+      'map',
+      'dining',
+      'offers',
+      'experiences',
+      'parking',
+      'vip',
+    ]
+
+    const handleScroll = () => {
+      const scrollPos = window.scrollY + 160
+      for (const id of sections) {
+        const el = document.getElementById(id)
+        if (el) {
+          const top = el.offsetTop
+          const h = el.offsetHeight
+          if (scrollPos >= top && scrollPos < top + h) {
+            setActiveSection(id)
+            break
+          }
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Quick navigation handlers
   const handleSelectStoreById = (storeId: string) => {
@@ -49,12 +88,14 @@ export default function AureliaHomePage() {
 
   const handleNavigateToMap = (storeName: string, floor: string) => {
     window.location.hash = '#map'
+    setActiveSection('map')
   }
 
   return (
     <div className="min-h-screen bg-[#08080a] text-[#fbf8f3] font-sans selection:bg-[#c5a059] selection:text-[#0a0a0c] relative">
       {/* ── 02: SMART FLOATING HEADER ── */}
       <AureliaHeader
+        currentSection={activeSection}
         onOpenConcierge={() => setConciergeOpen(true)}
         onOpenProfile={() => setProfileOpen(true)}
         onOpenSearch={() => setSearchOpen(true)}
@@ -190,31 +231,74 @@ export default function AureliaHomePage() {
       </div>
 
       {/* ── 16: MOBILE BOTTOM LUXURY DOCK ── */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#08080a]/90 backdrop-blur-xl border-t border-white/10 px-6 py-3 flex items-center justify-between text-[10px] font-sans tracking-widest text-[#e8e2d8]/70">
-        <a href="#hero" className="flex flex-col items-center gap-1 hover:text-[#c5a059] transition-colors">
-          <Home className="h-4 w-4" />
-          <span>HOME</span>
-        </a>
-        <a href="#stores" className="flex flex-col items-center gap-1 hover:text-[#c5a059] transition-colors">
-          <ShoppingBag className="h-4 w-4" />
-          <span>STORES</span>
-        </a>
-        <a href="#map" className="flex flex-col items-center gap-1 hover:text-[#c5a059] transition-colors">
-          <Compass className="h-4 w-4 text-[#c5a059]" />
-          <span className="text-[#c5a059]">MAP</span>
-        </a>
-        <a href="#offers" className="flex flex-col items-center gap-1 hover:text-[#c5a059] transition-colors">
-          <Tag className="h-4 w-4" />
-          <span>OFFERS</span>
-        </a>
-        <button
-          onClick={() => setProfileOpen(true)}
-          className="flex flex-col items-center gap-1 hover:text-[#c5a059] transition-colors"
-        >
-          <User className="h-4 w-4" />
-          <span>PROFILE</span>
-        </button>
-      </div>
+      {(() => {
+        const isHome = activeSection === 'hero' || activeSection === 'personalized'
+        const isStores = activeSection === 'stores'
+        const isMap = activeSection === 'map'
+        const isOffers = activeSection === 'offers' || activeSection === 'dining' || activeSection === 'experiences'
+
+        return (
+          <nav
+            aria-label="Mobile quick navigation dock"
+            className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#08080a]/95 backdrop-blur-xl border-t border-[#c5a059]/20 px-6 py-2.5 flex items-center justify-between text-[10px] font-sans tracking-widest"
+          >
+            <a
+              href="#hero"
+              onClick={() => setActiveSection('hero')}
+              aria-current={isHome ? 'location' : undefined}
+              className={`flex flex-col items-center gap-1 transition-all py-1 ${
+                isHome ? 'text-[#c5a059] font-bold drop-shadow-[0_0_6px_rgba(197,160,89,0.5)]' : 'text-[#e8e2d8]/70 hover:text-[#c5a059]'
+              }`}
+            >
+              <Home className={`h-4 w-4 ${isHome ? 'stroke-[2.5]' : 'stroke-[1.5]'}`} />
+              <span>HOME</span>
+            </a>
+            <a
+              href="#stores"
+              onClick={() => setActiveSection('stores')}
+              aria-current={isStores ? 'location' : undefined}
+              className={`flex flex-col items-center gap-1 transition-all py-1 ${
+                isStores ? 'text-[#c5a059] font-bold drop-shadow-[0_0_6px_rgba(197,160,89,0.5)]' : 'text-[#e8e2d8]/70 hover:text-[#c5a059]'
+              }`}
+            >
+              <ShoppingBag className={`h-4 w-4 ${isStores ? 'stroke-[2.5]' : 'stroke-[1.5]'}`} />
+              <span>STORES</span>
+            </a>
+            <a
+              href="#map"
+              onClick={() => setActiveSection('map')}
+              aria-current={isMap ? 'location' : undefined}
+              className={`flex flex-col items-center gap-1 transition-all py-1 ${
+                isMap ? 'text-[#c5a059] font-bold drop-shadow-[0_0_6px_rgba(197,160,89,0.5)]' : 'text-[#e8e2d8]/70 hover:text-[#c5a059]'
+              }`}
+            >
+              <Compass className={`h-4 w-4 ${isMap ? 'stroke-[2.5]' : 'stroke-[1.5]'}`} />
+              <span>MAP</span>
+            </a>
+            <a
+              href="#offers"
+              onClick={() => setActiveSection('offers')}
+              aria-current={isOffers ? 'location' : undefined}
+              className={`flex flex-col items-center gap-1 transition-all py-1 ${
+                isOffers ? 'text-[#c5a059] font-bold drop-shadow-[0_0_6px_rgba(197,160,89,0.5)]' : 'text-[#e8e2d8]/70 hover:text-[#c5a059]'
+              }`}
+            >
+              <Tag className={`h-4 w-4 ${isOffers ? 'stroke-[2.5]' : 'stroke-[1.5]'}`} />
+              <span>OFFERS</span>
+            </a>
+            <button
+              onClick={() => setProfileOpen(true)}
+              aria-label="Open VIP Profile"
+              className={`flex flex-col items-center gap-1 transition-all py-1 cursor-pointer ${
+                profileOpen ? 'text-[#c5a059] font-bold' : 'text-[#e8e2d8]/70 hover:text-[#c5a059]'
+              }`}
+            >
+              <User className={`h-4 w-4 ${profileOpen ? 'stroke-[2.5]' : 'stroke-[1.5]'}`} />
+              <span>PROFILE</span>
+            </button>
+          </nav>
+        )
+      })()}
     </div>
   )
 }

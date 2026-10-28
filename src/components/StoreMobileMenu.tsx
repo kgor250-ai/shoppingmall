@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import { Menu, X, Store as StoreIcon, Layers, LayoutDashboard, Package, BarChart, ShoppingBag, Receipt, AlertTriangle } from 'lucide-react'
+import { Menu, X, Store as StoreIcon, Layers } from 'lucide-react'
+import { StoreNavLinks } from './StoreNavLinks'
 
 type SessionData = {
   name?: string
@@ -23,22 +23,13 @@ export function StoreMobileMenu({
 }) {
   const [open, setOpen] = useState(false)
 
-  const navItems = [
-    { name: 'Dashboard', href: '/store', icon: LayoutDashboard },
-    { name: 'Billing POS', href: '/store/billing', icon: Receipt },
-    { name: 'Products', href: '/store/products', icon: Package },
-    { name: 'Stock', href: '/store/stock', icon: StoreIcon },
-    { name: 'Low Stock', href: '/store/low-stock', icon: AlertTriangle },
-    { name: 'Sales', href: '/store/sales', icon: ShoppingBag },
-    { name: 'Reports', href: '/store/reports', icon: BarChart },
-  ]
-
   return (
     <>
       <button
         className="md:hidden p-2 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors"
         onClick={() => setOpen(true)}
-        aria-label="Open navigation"
+        aria-label="Open navigation menu"
+        aria-expanded={open}
       >
         <Menu className="h-5 w-5" />
       </button>
@@ -53,7 +44,7 @@ export function StoreMobileMenu({
 
           {/* Drawer */}
           <aside
-            className="absolute left-0 top-0 h-full w-72 flex flex-col"
+            className="absolute left-0 top-0 h-full w-72 flex flex-col shadow-2xl animate-in slide-in-from-left duration-300"
             style={{
               background: 'linear-gradient(180deg, #064e3b 0%, #065f46 50%, #047857 100%)',
               borderRight: '1px solid #065f46',
@@ -83,6 +74,7 @@ export function StoreMobileMenu({
               </div>
               <button
                 onClick={() => setOpen(false)}
+                aria-label="Close navigation menu"
                 className="p-1.5 rounded-lg text-emerald-300 hover:text-white hover:bg-white/10 transition-colors flex-shrink-0"
               >
                 <X className="h-4 w-4" />
@@ -94,20 +86,7 @@ export function StoreMobileMenu({
               <p className="text-xs font-semibold text-emerald-400/60 uppercase tracking-widest px-2 mb-2">
                 Store Panel
               </p>
-              <ul className="space-y-0.5">
-                {navItems.map((item) => (
-                  <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      onClick={() => setOpen(false)}
-                      className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-emerald-100/80 hover:bg-white/10 hover:text-white transition-all gap-3"
-                    >
-                      <item.icon className="h-4 w-4 text-emerald-400" />
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <StoreNavLinks onNavigate={() => setOpen(false)} />
             </nav>
 
             {/* Footer */}

@@ -25,30 +25,42 @@ export async function proxy(request: NextRequest) {
   // Protect admin routes
   if (pathname.startsWith('/admin')) {
     if (!sessionCookie) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('from', pathname)
+      return NextResponse.redirect(loginUrl)
     }
     try {
       const payload = await decrypt(sessionCookie)
       if (payload?.role !== 'ADMIN') {
-        return NextResponse.redirect(new URL('/login', request.url))
+        const loginUrl = new URL('/login', request.url)
+        loginUrl.searchParams.set('from', pathname)
+        return NextResponse.redirect(loginUrl)
       }
     } catch {
-      return NextResponse.redirect(new URL('/login', request.url))
+      const response = NextResponse.redirect(new URL('/login', request.url))
+      response.cookies.delete('session')
+      return response
     }
   }
 
   // Protect store routes
   if (pathname.startsWith('/store')) {
     if (!sessionCookie) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('from', pathname)
+      return NextResponse.redirect(loginUrl)
     }
     try {
       const payload = await decrypt(sessionCookie)
       if (payload?.role !== 'STORE_OWNER') {
-        return NextResponse.redirect(new URL('/login', request.url))
+        const loginUrl = new URL('/login', request.url)
+        loginUrl.searchParams.set('from', pathname)
+        return NextResponse.redirect(loginUrl)
       }
     } catch {
-      return NextResponse.redirect(new URL('/login', request.url))
+      const response = NextResponse.redirect(new URL('/login', request.url))
+      response.cookies.delete('session')
+      return response
     }
   }
 

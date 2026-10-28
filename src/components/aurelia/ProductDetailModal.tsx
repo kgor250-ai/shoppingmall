@@ -111,6 +111,37 @@ export function ProductDetailModal({
             {/* Right: Product Details & Purchase Actions (7 cols) */}
             <div className="md:col-span-7 p-8 md:p-10 flex flex-col justify-between space-y-6">
               <div>
+                {/* Modal Breadcrumb Trail */}
+                <nav aria-label="Product navigation path" className="flex items-center gap-1.5 text-[11px] font-sans tracking-wider text-[#e8e2d8]/60 mb-3">
+                  <button
+                    onClick={() => {
+                      onClose()
+                      window.location.hash = '#hero'
+                    }}
+                    className="hover:text-[#c5a059] transition-colors cursor-pointer"
+                  >
+                    Home
+                  </button>
+                  <span>→</span>
+                  <button
+                    onClick={() => {
+                      onClose()
+                      window.location.hash = '#stores'
+                    }}
+                    className="hover:text-[#c5a059] transition-colors cursor-pointer"
+                  >
+                    Stores
+                  </button>
+                  <span>→</span>
+                  <span className="text-[#e8e2d8]/80 truncate max-w-[120px]">
+                    {product.store}
+                  </span>
+                  <span>→</span>
+                  <span className="text-[#c5a059] font-medium truncate max-w-[150px]" aria-current="page">
+                    {product.name}
+                  </span>
+                </nav>
+
                 {/* Category & Store Badges */}
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-sans text-[#c5a059] uppercase tracking-widest mb-2">
                   <span>{product.category || 'Luxury'} · {product.subCategory || 'Collection'}</span>

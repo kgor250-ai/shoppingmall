@@ -46,17 +46,30 @@ export async function loginAction(prevState: unknown, formData: FormData) {
   const storeId = user.stores.length > 0 ? user.stores[0].id : null
   
   if (user.role === 'STORE_OWNER' && !storeId) {
-    return { error: 'No store assigned to your account. Contact Admin.' }
+    return { error: 'No store assigned to your account. Contact Administrator.' }
+  }
+
+  if (user.role !== 'ADMIN' && user.role !== 'STORE_OWNER') {
+    return { error: 'Access restricted. Only Administrators and Store Owners may log in here.' }
   }
 
   await setAuthCookie({
     userId: user.id,
     role: user.role,
     email: user.email,
+    name: user.name,
     storeId: user.role === 'STORE_OWNER' ? storeId : null
   })
 
-  if (user.role === 'ADMIN') {
+  const redirectTo = formData.get('redirectTo') as string | null
+  const isSafeAdminRedirect = redirectTo && redirectTo.startsWith('/admin') && user.role === 'ADMIN'
+  const isSafeStoreRedirect = redirectTo && redirectTo.startsWith('/store') && user.role === 'STORE_OWNER'
+
+  if (isSafeAdminRedirect) {
+    redirect(redirectTo)
+  } else if (isSafeStoreRedirect) {
+    redirect(redirectTo)
+  } else if (user.role === 'ADMIN') {
     redirect('/admin')
   } else {
     redirect('/store')

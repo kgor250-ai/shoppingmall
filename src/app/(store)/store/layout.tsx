@@ -2,23 +2,18 @@ export const dynamic = 'force-dynamic'
 
 import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
-import Link from 'next/link'
 import { getSession } from '@/lib/auth'
 import { logoutAction } from '@/actions/auth'
 import prisma from '@/lib/prisma'
 import {
   Store as StoreIcon,
-  LayoutDashboard,
-  Package,
-  BarChart,
-  ShoppingBag,
-  Receipt,
-  AlertTriangle,
   LogOut,
   Layers,
 } from 'lucide-react'
 import { GlobalBackButton } from '@/components/GlobalBackButton'
 import { StoreMobileMenu } from '@/components/StoreMobileMenu'
+import { StoreNavLinks } from '@/components/StoreNavLinks'
+import { DashboardHeaderTitle } from '@/components/DashboardHeaderTitle'
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
   await connection()
@@ -35,16 +30,6 @@ export default async function StoreLayout({ children }: { children: React.ReactN
   if (!store) {
     redirect('/api/auth/logout')
   }
-
-  const navItems = [
-    { name: 'Dashboard', href: '/store', icon: LayoutDashboard },
-    { name: 'Billing POS', href: '/store/billing', icon: Receipt },
-    { name: 'Products', href: '/store/products', icon: Package },
-    { name: 'Stock', href: '/store/stock', icon: StoreIcon },
-    { name: 'Low Stock', href: '/store/low-stock', icon: AlertTriangle },
-    { name: 'Sales', href: '/store/sales', icon: ShoppingBag },
-    { name: 'Reports', href: '/store/reports', icon: BarChart },
-  ]
 
   return (
     <div className="h-screen w-full flex overflow-hidden" style={{ background: '#f0fdf4' }}>
@@ -80,19 +65,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
           <p className="text-xs font-semibold text-emerald-400/60 uppercase tracking-widest px-2 mb-2">
             Store Panel
           </p>
-          <ul className="space-y-0.5">
-            {navItems.map((item) => (
-              <li key={item.name}>
-                <Link
-                  href={item.href}
-                  className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-emerald-100/80 hover:bg-white/10 hover:text-white transition-all gap-3 group"
-                >
-                  <item.icon className="h-4 w-4 text-emerald-400 group-hover:text-emerald-200 transition-colors" />
-                  {item.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <StoreNavLinks />
         </nav>
 
         {/* Footer */}
@@ -116,7 +89,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
           <form action={logoutAction}>
             <button
               type="submit"
-              className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-lg text-emerald-300/70 hover:bg-red-500/20 hover:text-red-300 transition-all gap-3"
+              className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-lg text-emerald-300/70 hover:bg-red-500/20 hover:text-red-300 transition-all gap-3 cursor-pointer"
             >
               <LogOut className="h-4 w-4" />
               Sign Out
@@ -136,18 +109,21 @@ export default async function StoreLayout({ children }: { children: React.ReactN
             boxShadow: '0 1px 3px 0 rgba(6,78,59,0.06)',
           }}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <StoreMobileMenu session={session} store={store} />
-            <div>
-              <span className="font-semibold text-emerald-900 text-sm">{store.name}</span>
-              <span className="hidden md:inline text-emerald-600 text-xs ml-2">
-                — {store.storeNumber}
+            <DashboardHeaderTitle roleTitle="Store Owner" />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex flex-col text-right">
+              <span className="font-semibold text-emerald-900 text-xs truncate max-w-[150px]">
+                {store.name}
+              </span>
+              <span className="text-emerald-600 text-[10px]">
+                {store.storeNumber}
               </span>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
             <div
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
               style={{ background: '#d1fae5', color: '#065f46' }}
             >
               <StoreIcon className="h-3 w-3" />
