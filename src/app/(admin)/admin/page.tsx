@@ -405,9 +405,8 @@ function DashboardCard({
 
   const cardContent = (
     <div
-      className={`h-full rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300 p-5 flex flex-col justify-between relative overflow-hidden group ${
-        href ? 'hover:-translate-y-1 cursor-pointer' : ''
-      }`}
+      className={`h-full rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300 p-5 flex flex-col justify-between relative overflow-hidden group ${href ? 'hover:-translate-y-1 cursor-pointer' : ''
+        }`}
     >
       {/* Top accent bar */}
       <div className={`absolute top-0 left-0 right-0 h-[3px] ${conf.borderTop}`} />
