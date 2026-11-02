@@ -17,7 +17,7 @@ import {
   Loader2,
   ArrowLeft,
   AlertCircle,
-  Sparkles,
+  CheckCircle2,
 } from 'lucide-react'
 
 // Elegant Aurelia Signature Gold Monogram Emblem
@@ -72,20 +72,16 @@ export default function LoginPage() {
   const [passwordValue, setPasswordValue] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [clientError, setClientError] = useState<string | null>(null)
+  const [fillNotice, setFillNotice] = useState<string | null>(null)
 
-  const handleQuickLogin = (email: string, pass: string) => {
+  // Only fills the credentials into the fields — DOES NOT auto-submit.
+  // The user must review/insert details and explicitly click "Sign In →"!
+  const handleInsertCredentials = (email: string, pass: string, roleName: string) => {
     if (pending) return
     setClientError(null)
     setEmailValue(email)
     setPasswordValue(pass)
-    if (!formRef.current) return
-    const emailInput = formRef.current.elements.namedItem('email') as HTMLInputElement
-    const passInput = formRef.current.elements.namedItem('password') as HTMLInputElement
-    if (emailInput && passInput) {
-      emailInput.value = email
-      passInput.value = pass
-      formRef.current.requestSubmit()
-    }
+    setFillNotice(`${roleName} details inserted! Please click "Sign In" below.`)
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -94,23 +90,23 @@ export default function LoginPage() {
       return
     }
 
-    const form = e.currentTarget
-    const email = (form.elements.namedItem('email') as HTMLInputElement)?.value.trim()
-    const password = (form.elements.namedItem('password') as HTMLInputElement)?.value
+    const email = emailValue.trim()
+    const password = passwordValue.trim()
 
     if (!email) {
       e.preventDefault()
-      setClientError('Please enter your email address')
+      setClientError('Please enter your email address before signing in.')
       return
     }
 
     if (!password) {
       e.preventDefault()
-      setClientError('Please enter your password')
+      setClientError('Please enter your password before signing in.')
       return
     }
 
     setClientError(null)
+    setFillNotice(null)
   }
 
   const activeError = clientError || state?.error
@@ -202,6 +198,7 @@ export default function LoginPage() {
                 onChange={(e) => {
                   setEmailValue(e.target.value)
                   if (clientError) setClientError(null)
+                  if (fillNotice) setFillNotice(null)
                 }}
                 className="h-11 bg-black/50 border-white/10 text-white placeholder:text-stone-500 rounded-xl focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/30 transition-all text-sm disabled:opacity-50"
               />
@@ -225,6 +222,7 @@ export default function LoginPage() {
                   onChange={(e) => {
                     setPasswordValue(e.target.value)
                     if (clientError) setClientError(null)
+                    if (fillNotice) setFillNotice(null)
                   }}
                   className="h-11 pr-10 bg-black/50 border-white/10 text-white placeholder:text-stone-500 rounded-xl focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/30 transition-all text-sm disabled:opacity-50"
                 />
@@ -243,6 +241,17 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
+
+            {/* Insertion confirmation feedback notice */}
+            {fillNotice && !activeError && (
+              <div
+                role="status"
+                className="text-xs font-medium text-emerald-300 bg-emerald-950/40 border border-emerald-500/30 p-2.5 rounded-xl flex items-center gap-2 animate-in fade-in duration-200"
+              >
+                <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-400" />
+                <span>{fillNotice}</span>
+              </div>
+            )}
 
             {/* Error Message */}
             {activeError && (
@@ -282,38 +291,32 @@ export default function LoginPage() {
             {/* Quick Access Divider */}
             <div className="flex items-center gap-3 pt-3 pb-1">
               <div className="flex-1 h-[1px] bg-white/10" />
-              <span className="text-[11px] uppercase tracking-wider text-stone-500 font-medium">Quick Access</span>
+              <span className="text-[11px] uppercase tracking-wider text-stone-500 font-medium">Auto-Fill Details</span>
               <div className="flex-1 h-[1px] bg-white/10" />
             </div>
 
-            {/* Role Buttons */}
+            {/* Role Buttons to insert details */}
             <div className="grid grid-cols-2 gap-2.5">
               <button
                 type="button"
                 disabled={pending}
-                onClick={() => handleQuickLogin('admin1@gmail.com', 'admin123')}
+                onClick={() => handleInsertCredentials('admin1@gmail.com', 'admin123', 'Admin')}
                 className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-[#d4af37]/35 bg-stone-900/80 text-stone-200 text-xs font-medium hover:bg-[#d4af37]/15 hover:border-[#d4af37]/60 hover:text-white transition-all disabled:opacity-50 cursor-pointer shadow-sm group"
+                title="Fill Admin email and password into input fields"
               >
-                {pending ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-[#d4af37]" />
-                ) : (
-                  <ShieldCheck className="h-3.5 w-3.5 text-[#d4af37] transition-transform group-hover:scale-110" />
-                )}
-                <span>Login as Admin</span>
+                <ShieldCheck className="h-3.5 w-3.5 text-[#d4af37] transition-transform group-hover:scale-110" />
+                <span>Fill Admin ID</span>
               </button>
 
               <button
                 type="button"
                 disabled={pending}
-                onClick={() => handleQuickLogin('owner1@gmail.com', 'owner123')}
+                onClick={() => handleInsertCredentials('owner1@gmail.com', 'owner123', 'Store Owner')}
                 className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-[#d4af37]/35 bg-stone-900/80 text-stone-200 text-xs font-medium hover:bg-[#d4af37]/15 hover:border-[#d4af37]/60 hover:text-white transition-all disabled:opacity-50 cursor-pointer shadow-sm group"
+                title="Fill Owner email and password into input fields"
               >
-                {pending ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-[#d4af37]" />
-                ) : (
-                  <Crown className="h-3.5 w-3.5 text-[#d4af37] transition-transform group-hover:scale-110" />
-                )}
-                <span>Login as Owner</span>
+                <Crown className="h-3.5 w-3.5 text-[#d4af37] transition-transform group-hover:scale-110" />
+                <span>Fill Owner ID</span>
               </button>
             </div>
           </form>
