@@ -1,17 +1,83 @@
 'use client'
 
-import { useActionState, useRef } from 'react'
+import { useActionState, useRef, useState } from 'react'
+import Link from 'next/link'
 import { loginAction } from '@/actions/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Building2, ShieldCheck, Store, Loader2 } from 'lucide-react'
+import {
+  User,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ShieldCheck,
+  Crown,
+  Loader2,
+  ArrowLeft,
+  AlertCircle,
+  Sparkles,
+} from 'lucide-react'
+
+// Elegant Aurelia Signature Gold Monogram Emblem
+function AureliaEmblem({ className = 'h-14 w-14' }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="aureliaGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#fae8c8" />
+          <stop offset="45%" stopColor="#d4af37" />
+          <stop offset="100%" stopColor="#9b7324" />
+        </linearGradient>
+      </defs>
+
+      {/* 4-point star sparkle */}
+      <path
+        d="M 68 17 Q 68 25 76 25 Q 68 25 68 33 Q 68 25 60 25 Q 68 25 68 17 Z"
+        fill="url(#aureliaGold)"
+      />
+
+      {/* Left stem of stylized A */}
+      <path
+        d="M 31 79 L 47 22 L 53 22 L 37 79 Z"
+        fill="url(#aureliaGold)"
+      />
+
+      {/* Right stem of stylized A */}
+      <path
+        d="M 45 22 L 51 22 L 69 79 L 63 79 Z"
+        fill="url(#aureliaGold)"
+      />
+
+      {/* Dynamic curved swoosh crossbar */}
+      <path
+        d="M 27 61 Q 48 43 73 59 Q 50 49 29 61 Z"
+        fill="url(#aureliaGold)"
+      />
+    </svg>
+  )
+}
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(loginAction, undefined)
   const formRef = useRef<HTMLFormElement>(null)
+  const [emailValue, setEmailValue] = useState('')
+  const [passwordValue, setPasswordValue] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [clientError, setClientError] = useState<string | null>(null)
 
   const handleQuickLogin = (email: string, pass: string) => {
+    if (pending) return
+    setClientError(null)
+    setEmailValue(email)
+    setPasswordValue(pass)
     if (!formRef.current) return
     const emailInput = formRef.current.elements.namedItem('email') as HTMLInputElement
     const passInput = formRef.current.elements.namedItem('password') as HTMLInputElement
@@ -22,45 +88,108 @@ export default function LoginPage() {
     }
   }
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (pending) {
+      e.preventDefault()
+      return
+    }
+
+    const form = e.currentTarget
+    const email = (form.elements.namedItem('email') as HTMLInputElement)?.value.trim()
+    const password = (form.elements.namedItem('password') as HTMLInputElement)?.value
+
+    if (!email) {
+      e.preventDefault()
+      setClientError('Please enter your email address')
+      return
+    }
+
+    if (!password) {
+      e.preventDefault()
+      setClientError('Please enter your password')
+      return
+    }
+
+    setClientError(null)
+  }
+
+  const activeError = clientError || state?.error
+
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4"
+      className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 relative overflow-hidden"
       style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0f2744 100%)',
+        background: 'radial-gradient(ellipse at 50% 20%, #1c150c 0%, #0c0a09 60%, #050505 100%)',
       }}
     >
-      {/* Decorative background grid */}
+      {/* Ambient background gold glow & subtle geometric luxury mesh */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#d4af37]/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-80 h-80 bg-amber-900/10 rounded-full blur-[100px] pointer-events-none" />
+
+      {/* Decorative gold subtle grid lines */}
       <div
-        className="absolute inset-0 opacity-10"
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
+            'linear-gradient(rgba(212,175,55,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.4) 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
         }}
       />
 
-      <div className="relative w-full max-w-md">
-        {/* Card */}
+      <div className="relative w-full max-w-[420px] z-10 animate-in fade-in duration-500">
+        {/* Return to mall link */}
+        <div className="mb-3 flex justify-between items-center">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#d4af37]/80 hover:text-[#fae8c8] transition-colors py-1 px-3 rounded-full bg-black/40 border border-[#d4af37]/20 backdrop-blur-md"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Return to Mall</span>
+          </Link>
+
+          <span className="text-[11px] uppercase tracking-widest text-stone-500 font-light hidden sm:inline-block">
+            Haute Destination
+          </span>
+        </div>
+
+        {/* Main Glassmorphic Card */}
         <div
-          className="rounded-2xl p-8 shadow-2xl border border-white/10"
-          style={{ background: 'rgba(15,23,42,0.85)', backdropFilter: 'blur(20px)' }}
+          className="rounded-[26px] p-7 sm:p-9 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.95)] border border-[#d4af37]/35 relative overflow-hidden backdrop-blur-2xl"
+          style={{
+            background: 'radial-gradient(circle at 50% 0%, rgba(35, 27, 18, 0.94) 0%, rgba(14, 12, 10, 0.96) 100%)',
+            boxShadow: '0 25px 60px -15px rgba(0,0,0,0.95), 0 0 35px -5px rgba(212, 175, 55, 0.15)',
+          }}
         >
-          {/* Logo */}
-          <div className="flex flex-col items-center mb-8">
-            <div
-              className="h-16 w-16 rounded-2xl flex items-center justify-center mb-4 shadow-lg"
-              style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}
-            >
-              <Building2 className="text-white h-8 w-8" />
+          {/* Subtle Top Gold Highlight Line */}
+          <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-[#fae8c8] to-transparent opacity-60" />
+
+          {/* Logo & Branding */}
+          <div className="flex flex-col items-center text-center">
+            <div className="relative mb-2">
+              <AureliaEmblem className="h-14 w-14 drop-shadow-[0_4px_12px_rgba(212,175,55,0.35)]" />
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Shopping Mall System</h1>
-            <p className="text-slate-400 text-sm mt-1">Sign in to access your dashboard</p>
+
+            <h1 className="font-serif tracking-[0.28em] text-xl font-bold uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#fae8c8] via-[#e6ca85] to-[#c5a059]">
+              AURELIA
+            </h1>
+            <p className="tracking-[0.3em] text-[10px] uppercase text-[#c5a059]/90 font-medium -mt-0.5">
+              SHOPPING MALL
+            </p>
+
+            <h2 className="text-xl font-normal text-white tracking-wide mt-5">
+              Welcome Back
+            </h2>
+            <p className="text-stone-400 text-xs mt-1">
+              Sign in to your account to continue
+            </p>
           </div>
 
-          <form action={formAction} ref={formRef} className="space-y-5">
+          <form action={formAction} ref={formRef} onSubmit={handleSubmit} className="space-y-4 mt-6">
+            {/* Email Address Input */}
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-slate-300 text-sm font-medium">
-                Email Address
+              <Label htmlFor="email" className="text-stone-300 text-xs font-medium flex items-center gap-1.5">
+                <User className="h-3.5 w-3.5 text-[#d4af37]" />
+                <span>Email Address</span>
               </Label>
               <Input
                 id="email"
@@ -68,88 +197,141 @@ export default function LoginPage() {
                 type="email"
                 placeholder="Enter your email"
                 required
-                className="h-11 bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500/20"
+                disabled={pending}
+                value={emailValue}
+                onChange={(e) => {
+                  setEmailValue(e.target.value)
+                  if (clientError) setClientError(null)
+                }}
+                className="h-11 bg-black/50 border-white/10 text-white placeholder:text-stone-500 rounded-xl focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/30 transition-all text-sm disabled:opacity-50"
               />
             </div>
 
+            {/* Password Input with Eye Toggle */}
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-slate-300 text-sm font-medium">
-                Password
+              <Label htmlFor="password" className="text-stone-300 text-xs font-medium flex items-center gap-1.5">
+                <Lock className="h-3.5 w-3.5 text-[#d4af37]" />
+                <span>Password</span>
               </Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Enter your password"
-                required
-                className="h-11 bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500/20"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  required
+                  disabled={pending}
+                  value={passwordValue}
+                  onChange={(e) => {
+                    setPasswordValue(e.target.value)
+                    if (clientError) setClientError(null)
+                  }}
+                  className="h-11 pr-10 bg-black/50 border-white/10 text-white placeholder:text-stone-500 rounded-xl focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/30 transition-all text-sm disabled:opacity-50"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-[#e6ca85] transition-colors cursor-pointer"
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
 
-            {state?.error && (
-              <div className="text-sm font-medium text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-lg flex items-center gap-2">
-                <span className="text-red-400">⚠</span>
-                {state.error}
+            {/* Error Message */}
+            {activeError && (
+              <div
+                role="alert"
+                aria-live="polite"
+                className="text-xs font-medium text-rose-300 bg-rose-950/40 border border-rose-500/30 p-2.5 rounded-xl flex items-start gap-2 animate-in fade-in duration-200"
+              >
+                <AlertCircle className="h-4 w-4 flex-shrink-0 text-rose-400 mt-0.5" />
+                <span>{activeError}</span>
               </div>
             )}
 
+            {/* Gold Gradient Login Button */}
             <Button
-              className="w-full h-11 text-base font-semibold mt-2"
+              className="w-full h-11 text-sm font-semibold rounded-xl text-stone-950 transition-all cursor-pointer shadow-lg hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed mt-2 border-0 flex items-center justify-center gap-2 group"
               type="submit"
               disabled={pending}
-              style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}
+              style={{
+                background: 'linear-gradient(90deg, #f7dca1 0%, #d4af37 50%, #b38728 100%)',
+                boxShadow: '0 4px 20px rgba(212, 175, 55, 0.35)',
+              }}
             >
               {pending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  <Loader2 className="h-4 w-4 animate-spin text-stone-950" />
+                  <span>Signing in...</span>
                 </>
               ) : (
-                'Sign In'
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </>
               )}
             </Button>
 
-            {/* Quick Login Section */}
-            <div className="pt-4">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="flex-1 h-px bg-white/10" />
-                <span className="text-xs text-slate-500 font-medium">Quick Access</span>
-                <div className="flex-1 h-px bg-white/10" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  disabled={pending}
-                  onClick={() => handleQuickLogin('admin1@gmail.com', 'admin123')}
-                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-300 text-sm font-medium hover:bg-blue-500/20 hover:border-blue-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {pending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <ShieldCheck className="h-4 w-4" />
-                  )}
-                  Login as Admin
-                </button>
-                <button
-                  type="button"
-                  disabled={pending}
-                  onClick={() => handleQuickLogin('owenr1@gmail.com', 'owner123')}
-                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 text-sm font-medium hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {pending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Store className="h-4 w-4" />
-                  )}
-                  Login as Owner
-                </button>
-              </div>
+            {/* Quick Access Divider */}
+            <div className="flex items-center gap-3 pt-3 pb-1">
+              <div className="flex-1 h-[1px] bg-white/10" />
+              <span className="text-[11px] uppercase tracking-wider text-stone-500 font-medium">Quick Access</span>
+              <div className="flex-1 h-[1px] bg-white/10" />
+            </div>
+
+            {/* Role Buttons */}
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => handleQuickLogin('admin1@gmail.com', 'admin123')}
+                className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-[#d4af37]/35 bg-stone-900/80 text-stone-200 text-xs font-medium hover:bg-[#d4af37]/15 hover:border-[#d4af37]/60 hover:text-white transition-all disabled:opacity-50 cursor-pointer shadow-sm group"
+              >
+                {pending ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-[#d4af37]" />
+                ) : (
+                  <ShieldCheck className="h-3.5 w-3.5 text-[#d4af37] transition-transform group-hover:scale-110" />
+                )}
+                <span>Login as Admin</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => handleQuickLogin('owner1@gmail.com', 'owner123')}
+                className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-[#d4af37]/35 bg-stone-900/80 text-stone-200 text-xs font-medium hover:bg-[#d4af37]/15 hover:border-[#d4af37]/60 hover:text-white transition-all disabled:opacity-50 cursor-pointer shadow-sm group"
+              >
+                {pending ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-[#d4af37]" />
+                ) : (
+                  <Crown className="h-3.5 w-3.5 text-[#d4af37] transition-transform group-hover:scale-110" />
+                )}
+                <span>Login as Owner</span>
+              </button>
             </div>
           </form>
+
+          {/* Footer */}
+          <div className="mt-6 pt-4 border-t border-white/5 text-center">
+            <p className="text-[11px] tracking-widest uppercase text-stone-400 font-light flex items-center justify-center gap-2">
+              <span>Secure</span>
+              <span className="text-[#d4af37]">•</span>
+              <span>Trusted</span>
+              <span className="text-[#d4af37]">•</span>
+              <span className="font-serif font-medium text-stone-300">AURELIA</span>
+            </p>
+          </div>
         </div>
 
-        <p className="text-center text-slate-600 text-xs mt-6">
-          &copy; 2026 Shopping Mall Management System
+        <p className="text-center text-stone-500/80 text-[11px] mt-4 font-light">
+          &copy; 2026 Aurelia Shopping Mall System
         </p>
       </div>
     </div>
