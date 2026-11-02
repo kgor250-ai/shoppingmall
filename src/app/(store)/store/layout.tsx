@@ -8,17 +8,15 @@ import { logoutAction } from '@/actions/auth'
 import prisma from '@/lib/prisma'
 import {
   Store as StoreIcon,
-  LayoutDashboard,
-  Package,
-  BarChart,
-  ShoppingBag,
-  Receipt,
-  AlertTriangle,
   LogOut,
+  Sparkles,
+  ExternalLink,
   Layers,
 } from 'lucide-react'
 import { GlobalBackButton } from '@/components/GlobalBackButton'
 import { StoreMobileMenu } from '@/components/StoreMobileMenu'
+import { StoreSidebarNav } from '@/components/StoreSidebarNav'
+import { AureliaMonogram } from '@/components/aurelia/AureliaMonogram'
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
   await connection()
@@ -36,130 +34,125 @@ export default async function StoreLayout({ children }: { children: React.ReactN
     redirect('/api/auth/logout')
   }
 
-  const navItems = [
-    { name: 'Dashboard', href: '/store', icon: LayoutDashboard },
-    { name: 'Billing POS', href: '/store/billing', icon: Receipt },
-    { name: 'Products', href: '/store/products', icon: Package },
-    { name: 'Stock', href: '/store/stock', icon: StoreIcon },
-    { name: 'Low Stock', href: '/store/low-stock', icon: AlertTriangle },
-    { name: 'Sales', href: '/store/sales', icon: ShoppingBag },
-    { name: 'Reports', href: '/store/reports', icon: BarChart },
-  ]
-
   return (
-    <div className="h-screen w-full flex overflow-hidden" style={{ background: '#f0fdf4' }}>
-      {/* ── Sidebar (desktop) ── */}
+    <div className="h-screen w-full flex overflow-hidden bg-stone-100 dark:bg-stone-950 font-sans">
+      {/* ── Luxury Store Owner Sidebar (desktop) ── */}
       <aside
-        className="w-60 hidden md:flex flex-col flex-shrink-0 h-screen overflow-hidden"
+        className="w-64 hidden md:flex flex-col flex-shrink-0 h-screen overflow-hidden select-none"
         style={{
-          background: 'linear-gradient(180deg, #064e3b 0%, #065f46 50%, #047857 100%)',
-          borderRight: '1px solid #065f46',
+          background: 'radial-gradient(ellipse at 50% 0%, #06241a 0%, #081712 60%, #030a07 100%)',
+          borderRight: '1px solid rgba(16, 185, 129, 0.2)',
+          boxShadow: '4px 0 24px rgba(0, 0, 0, 0.35)',
         }}
       >
-        {/* Brand */}
+        {/* Brand & Store Header */}
         <div
-          className="h-16 flex items-center px-5 gap-3 flex-shrink-0"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}
+          className="h-16 flex items-center px-4 gap-3 flex-shrink-0 relative overflow-hidden"
+          style={{ borderBottom: '1px solid rgba(16, 185, 129, 0.18)' }}
         >
-          <div
-            className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)' }}
-          >
-            <StoreIcon className="h-4 w-4 text-white" />
+          <div className="h-9 w-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+            <StoreIcon className="h-4 w-4 text-emerald-400" />
           </div>
-          <div className="min-w-0">
-            <div className="text-white font-bold text-sm leading-tight truncate" title={store.name}>
+          <div className="min-w-0 flex-1">
+            <div className="text-[#fbf8f3] font-semibold text-xs leading-tight truncate" title={store.name}>
               {store.name}
             </div>
-            <div className="text-emerald-300 text-xs">{store.storeNumber}</div>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-[10px] text-emerald-300 font-mono">{store.storeNumber}</span>
+              <span className="text-[10px] text-stone-500">•</span>
+              <span className="text-[10px] text-stone-400 truncate">{store.floor}</span>
+            </div>
           </div>
         </div>
 
-        {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-4 px-3 custom-dark-scrollbar overscroll-contain">
-          <p className="text-xs font-semibold text-emerald-400/60 uppercase tracking-widest px-2 mb-2">
-            Store Panel
-          </p>
-          <ul className="space-y-0.5">
-            {navItems.map((item) => (
-              <li key={item.name}>
-                <Link
-                  href={item.href}
-                  className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-emerald-100/80 hover:bg-white/10 hover:text-white transition-all gap-3 group"
-                >
-                  <item.icon className="h-4 w-4 text-emerald-400 group-hover:text-emerald-200 transition-colors" />
-                  {item.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* Dynamic Route-Aware Navigation */}
+        <StoreSidebarNav />
 
-        {/* Footer */}
-        <div className="p-3 flex-shrink-0 mt-auto" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          <div className="px-3 py-2 mb-1">
-            <div className="flex items-center gap-2">
-              <div
-                className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0"
-                style={{ background: 'rgba(255,255,255,0.15)' }}
-              >
-                <Layers className="h-3.5 w-3.5 text-emerald-200" />
+        {/* Footer with Store Owner Info & Logout */}
+        <div
+          className="p-3 flex-shrink-0 mt-auto bg-black/40 backdrop-blur-md"
+          style={{ borderTop: '1px solid rgba(16, 185, 129, 0.15)' }}
+        >
+          <div className="px-3 py-2 mb-2 rounded-xl bg-stone-900/80 border border-white/5">
+            <div className="flex items-center gap-2.5">
+              <div className="h-7 w-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                <Layers className="h-3.5 w-3.5 text-emerald-300" />
               </div>
-              <div className="min-w-0">
-                <div className="text-xs font-semibold text-emerald-100 truncate">
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-medium text-stone-200 truncate">
                   {session.name || 'Store Owner'}
                 </div>
-                <div className="text-xs text-emerald-400/60 truncate">{session.email}</div>
+                <div className="text-[11px] text-stone-400 truncate">{session.email}</div>
               </div>
             </div>
           </div>
+
           <form action={logoutAction}>
             <button
               type="submit"
-              className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-lg text-emerald-300/70 hover:bg-red-500/20 hover:text-red-300 transition-all gap-3"
+              className="flex items-center w-full px-3 py-2 text-xs font-medium rounded-xl hover:bg-rose-950/40 text-stone-400 hover:text-rose-300 border border-transparent hover:border-rose-900/40 transition-all gap-2.5 cursor-pointer"
             >
-              <LogOut className="h-4 w-4" />
-              Sign Out
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Sign Out from Store</span>
             </button>
           </form>
         </div>
       </aside>
 
-      {/* ── Main Content ── */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
-        {/* Header */}
+      {/* ── Main Content Area ── */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden min-w-0 bg-[#f9fafb] dark:bg-stone-950">
+        {/* Top Header */}
         <header
-          className="h-14 flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-10"
+          className="h-16 flex items-center justify-between px-4 md:px-7 flex-shrink-0 z-10 bg-white/95 dark:bg-stone-900/90 backdrop-blur-md"
           style={{
-            background: '#ffffff',
-            borderBottom: '1px solid #d1fae5',
-            boxShadow: '0 1px 3px 0 rgba(6,78,59,0.06)',
+            borderBottom: '1px solid rgba(226, 232, 240, 0.9)',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.03)',
           }}
         >
-          <div className="flex items-center gap-3">
-            <StoreMobileMenu session={session} store={store} />
+          <div className="flex items-center gap-3.5">
+            <StoreMobileMenu store={store} session={session} />
             <div>
-              <span className="font-semibold text-emerald-900 text-sm">{store.name}</span>
-              <span className="hidden md:inline text-emerald-600 text-xs ml-2">
-                — {store.storeNumber}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-stone-900 dark:text-stone-100 text-sm">
+                  {store.name}
+                </span>
+                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  Active Boutique
+                </span>
+              </div>
+              <p className="hidden md:block text-[11px] text-stone-400">
+                Aurelia Mall Merchant Portal — {store.floor} ({store.storeNumber})
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
-              style={{ background: '#d1fae5', color: '#065f46' }}
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              target="_blank"
+              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-emerald-500/30 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 transition-all"
             >
-              <StoreIcon className="h-3 w-3" />
-              Store Owner
+              <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+              <span>View Mall</span>
+              <ExternalLink className="h-3 w-3 opacity-60" />
+            </Link>
+
+            <div className="flex items-center gap-2 pl-2 border-l border-stone-200 dark:border-stone-800">
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-200 border border-emerald-500/40 shadow-sm">
+                <StoreIcon className="h-3.5 w-3.5 text-emerald-400" />
+                <span className="tracking-wide">Owner</span>
+              </div>
             </div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar overscroll-contain">
-          <GlobalBackButton />
-          {children}
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar overscroll-contain">
+          <div className="max-w-7xl mx-auto space-y-6">
+            <GlobalBackButton />
+            {children}
+          </div>
         </main>
       </div>
     </div>

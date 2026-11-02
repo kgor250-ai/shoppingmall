@@ -143,186 +143,246 @@ export default async function AdminDashboard() {
   ].filter((d) => d.value > 0)
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          Dashboard Overview
-        </h1>
-        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-          Real-time statistics from the entire mall system
-        </p>
+    <div className="space-y-8">
+      {/* Executive Welcome Banner */}
+      <div className="relative rounded-3xl p-6 sm:p-8 overflow-hidden border border-[#d4af37]/30 bg-gradient-to-r from-stone-900 via-stone-950 to-stone-900 text-white shadow-xl">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#d4af37]/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d4af37]/15 border border-[#d4af37]/35 text-[#fae8c8] text-xs font-medium mb-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>AURELIA EXECUTIVE INTELLIGENCE</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#fae8c8] via-[#e6ca85] to-[#c5a059]">
+              Mall Operations &amp; Financial Overview
+            </h1>
+            <p className="text-stone-400 text-xs sm:text-sm mt-1 max-w-2xl font-light">
+              Real-time enterprise analytics across all retail stores, tenant leasing, financial streams, and visitor operations.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/stores"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#fae8c8] via-[#d4af37] to-[#b38728] text-stone-950 text-xs font-semibold hover:brightness-105 transition-all shadow-md active:scale-95 cursor-pointer"
+            >
+              <Building2 className="h-4 w-4" />
+              <span>Manage Stores ({totalStores})</span>
+            </Link>
+          </div>
+        </div>
       </div>
 
-      {/* Row 1 — Financial KPIs */}
-      <div>
-        <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
-          Financial
-        </h2>
+      {/* Row 1 — Financial Performance */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-3 w-1 bg-[#d4af37] rounded-full" />
+            <h2 className="text-xs font-bold text-stone-700 dark:text-stone-300 uppercase tracking-widest font-mono">
+              Financial Performance &amp; Revenue
+            </h2>
+          </div>
+          <span className="text-[11px] text-stone-400 font-mono">Currency INR (₹)</span>
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <DashboardCard
             href="/admin/reports"
-            title="Total Revenue"
+            title="Total Mall Revenue"
             value={formatINR(totalRevenue)}
+            subtitle="Gross aggregated sales"
             icon={IndianRupee}
-            accent="blue"
+            accent="gold"
           />
           <DashboardCard
             href="/admin/reports"
             title="This Month Sales"
             value={formatINR(currentMonthSales._sum.total)}
-            subtitle={`${currentMonthSales._count.id} invoices`}
+            subtitle={`${currentMonthSales._count.id} completed invoices`}
             icon={TrendingUp}
-            accent="green"
+            accent="emerald"
           />
           <DashboardCard
             href="/admin/rent"
-            title="Pending Rent"
+            title="Pending Tenant Rent"
             value={formatINR(pendingRent._sum.amount)}
+            subtitle="Awaiting tenant settlement"
             icon={IndianRupee}
-            accent="yellow"
+            accent="amber"
           />
           <DashboardCard
             href="/admin/rent"
             title="Overdue Rent"
             value={formatINR(overdueRent._sum.amount)}
+            subtitle={overdueRent._sum.amount ? 'Immediate action required' : 'All accounts in good standing'}
             icon={AlertCircle}
-            accent={overdueRent._sum.amount ? 'red' : 'default'}
+            accent={overdueRent._sum.amount ? 'rose' : 'default'}
           />
         </div>
       </div>
 
-      {/* Row 2 — Operations KPIs */}
-      <div>
-        <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
-          Operations
-        </h2>
+      {/* Row 2 — Mall Operations & Directory */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <div className="h-3 w-1 bg-blue-500 rounded-full" />
+          <h2 className="text-xs font-bold text-stone-700 dark:text-stone-300 uppercase tracking-widest font-mono">
+            Mall Operations &amp; Directory
+          </h2>
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <DashboardCard
             href="/admin/stores"
-            title="Total Stores"
+            title="Retail Stores"
             value={totalStores}
-            subtitle={`${activeStores} active`}
+            subtitle={`${activeStores} actively operational`}
             icon={Building2}
-            accent="blue"
+            accent="sapphire"
           />
           <DashboardCard
             href="/admin/owners"
-            title="Store Owners"
+            title="Registered Store Owners"
             value={storeOwners}
+            subtitle="Authorized tenant logins"
             icon={UserCheck}
-            accent="indigo"
-          />
-          <DashboardCard
-            href="/admin/employees"
-            title="Employees"
-            value={employees}
-            icon={Users}
             accent="violet"
           />
           <DashboardCard
-            href="/admin/customers"
-            title="Customers"
-            value={customers}
+            href="/admin/employees"
+            title="Mall Staff &amp; Employees"
+            value={employees}
+            subtitle="Security, facilities & service"
             icon={Users}
             accent="sky"
+          />
+          <DashboardCard
+            href="/admin/customers"
+            title="Registered Customers"
+            value={customers}
+            subtitle="Loyalty & VIP members"
+            icon={Users}
+            accent="teal"
           />
         </div>
       </div>
 
-      {/* Row 3 — Inventory & Support KPIs */}
-      <div>
-        <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
-          Inventory &amp; Support
-        </h2>
+      {/* Row 3 — Inventory & Support Intelligence */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <div className="h-3 w-1 bg-stone-500 rounded-full" />
+          <h2 className="text-xs font-bold text-stone-700 dark:text-stone-300 uppercase tracking-widest font-mono">
+            Inventory Health &amp; Tenant Support
+          </h2>
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <DashboardCard
             href="/admin/reports"
-            title="Total Sales"
+            title="Total Sales Count"
             value={totalSalesCount}
-            subtitle="all time invoices"
+            subtitle="All-time verified receipts"
             icon={Receipt}
-            accent="teal"
+            accent="sapphire"
           />
           <DashboardCard
-            title="Total Products"
+            title="Catalogued Products"
             value={totalProducts}
+            subtitle="Across all brand categories"
             icon={Package}
             accent="default"
           />
           <DashboardCard
-            title="Low Stock Products"
+            title="Low Stock Warning"
             value={lowStockProducts}
+            subtitle={lowStockProducts > 0 ? 'Requires store restocking' : 'Inventory levels healthy'}
             icon={ShoppingCart}
-            accent={lowStockProducts > 0 ? 'red' : 'default'}
+            accent={lowStockProducts > 0 ? 'rose' : 'default'}
           />
           <DashboardCard
             href="/admin/complaints"
-            title="Open Complaints"
+            title="Active Complaints"
             value={openComplaints}
+            subtitle={openComplaints > 0 ? 'Pending resolution' : 'Zero active grievances'}
             icon={AlertCircle}
-            accent={openComplaints > 0 ? 'yellow' : 'default'}
+            accent={openComplaints > 0 ? 'amber' : 'default'}
           />
         </div>
       </div>
 
-      <AdminCharts
-        salesData={salesData}
-        rentData={rentData}
-        complaintData={complaintData}
-        storePerformanceData={storePerformanceData}
-        inventoryData={inventoryData}
-      />
+      {/* Row 4 — Charts & Interactive Analytics */}
+      <div className="pt-2">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="h-3 w-1 bg-[#d4af37] rounded-full" />
+          <h2 className="text-xs font-bold text-stone-700 dark:text-stone-300 uppercase tracking-widest font-mono">
+            Interactive Analytics &amp; Visual Trends
+          </h2>
+        </div>
+
+        <AdminCharts
+          salesData={salesData}
+          rentData={rentData}
+          complaintData={complaintData}
+          storePerformanceData={storePerformanceData}
+          inventoryData={inventoryData}
+        />
+      </div>
     </div>
   )
 }
 
-type Accent = 'blue' | 'green' | 'red' | 'yellow' | 'indigo' | 'violet' | 'sky' | 'teal' | 'default'
+type Accent = 'gold' | 'emerald' | 'amber' | 'rose' | 'sapphire' | 'violet' | 'sky' | 'teal' | 'default'
 
-const accentMap: Record<Accent, { card: string; icon: string; value: string }> = {
-  blue: {
-    card: 'border-l-4 border-l-blue-500',
-    icon: 'text-blue-500',
-    value: 'text-blue-700 dark:text-blue-300',
+interface AccentConfig {
+  borderTop: string
+  iconBg: string
+  valueText: string
+}
+
+const accentConfig: Record<Accent, AccentConfig> = {
+  gold: {
+    borderTop: 'bg-gradient-to-r from-[#fae8c8] via-[#d4af37] to-[#b38728]',
+    iconBg: 'bg-[#d4af37]/15 text-[#9b7324] dark:text-[#fae8c8] border border-[#d4af37]/30',
+    valueText: 'text-stone-950 dark:text-[#fae8c8]',
   },
-  green: {
-    card: 'border-l-4 border-l-emerald-500',
-    icon: 'text-emerald-500',
-    value: 'text-emerald-700 dark:text-emerald-300',
+  emerald: {
+    borderTop: 'bg-emerald-500',
+    iconBg: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/40',
+    valueText: 'text-emerald-700 dark:text-emerald-300',
   },
-  red: {
-    card: 'border-l-4 border-l-red-500',
-    icon: 'text-red-500',
-    value: 'text-red-600 dark:text-red-400',
+  amber: {
+    borderTop: 'bg-amber-500',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/40',
+    valueText: 'text-amber-700 dark:text-amber-300',
   },
-  yellow: {
-    card: 'border-l-4 border-l-amber-400',
-    icon: 'text-amber-500',
-    value: 'text-amber-700 dark:text-amber-300',
+  rose: {
+    borderTop: 'bg-rose-500',
+    iconBg: 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-800/40',
+    valueText: 'text-rose-700 dark:text-rose-300',
   },
-  indigo: {
-    card: 'border-l-4 border-l-indigo-500',
-    icon: 'text-indigo-500',
-    value: 'text-indigo-700 dark:text-indigo-300',
+  sapphire: {
+    borderTop: 'bg-blue-600',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/40',
+    valueText: 'text-blue-800 dark:text-blue-300',
   },
   violet: {
-    card: 'border-l-4 border-l-violet-500',
-    icon: 'text-violet-500',
-    value: 'text-violet-700 dark:text-violet-300',
+    borderTop: 'bg-violet-600',
+    iconBg: 'bg-violet-50 dark:bg-violet-950/40 text-violet-600 dark:text-violet-400 border border-violet-200/50 dark:border-violet-800/40',
+    valueText: 'text-violet-800 dark:text-violet-300',
   },
   sky: {
-    card: 'border-l-4 border-l-sky-500',
-    icon: 'text-sky-500',
-    value: 'text-sky-700 dark:text-sky-300',
+    borderTop: 'bg-sky-500',
+    iconBg: 'bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 border border-sky-200/50 dark:border-sky-800/40',
+    valueText: 'text-sky-800 dark:text-sky-300',
   },
   teal: {
-    card: 'border-l-4 border-l-teal-500',
-    icon: 'text-teal-500',
-    value: 'text-teal-700 dark:text-teal-300',
+    borderTop: 'bg-teal-600',
+    iconBg: 'bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 border border-teal-200/50 dark:border-teal-800/40',
+    valueText: 'text-teal-800 dark:text-teal-300',
   },
   default: {
-    card: '',
-    icon: 'text-muted-foreground',
-    value: '',
+    borderTop: 'bg-stone-300 dark:bg-stone-700',
+    iconBg: 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700',
+    valueText: 'text-stone-900 dark:text-stone-100',
   },
 }
 
@@ -341,28 +401,49 @@ function DashboardCard({
   accent?: Accent
   href?: string
 }) {
-  const a = accentMap[accent]
+  const conf = accentConfig[accent]
 
   const cardContent = (
-    <Card
-      className={`h-full transition-all duration-200 ${a.card} ${href ? 'hover:shadow-md hover:-translate-y-0.5' : ''}`}
+    <div
+      className={`h-full rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300 p-5 flex flex-col justify-between relative overflow-hidden group ${
+        href ? 'hover:-translate-y-1 cursor-pointer' : ''
+      }`}
     >
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-          {title}
-        </CardTitle>
-        <div
-          className={`h-8 w-8 rounded-lg flex items-center justify-center ${accent !== 'default' ? 'bg-current/10' : 'bg-muted'}`}
-          style={{ backgroundColor: accent !== 'default' ? undefined : undefined }}
-        >
-          <Icon className={`h-4 w-4 ${a.icon}`} />
+      {/* Top accent bar */}
+      <div className={`absolute top-0 left-0 right-0 h-[3px] ${conf.borderTop}`} />
+
+      <div>
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider font-mono">
+            {title}
+          </span>
+          <div
+            className={`h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105 ${conf.iconBg}`}
+          >
+            <Icon className="h-4 w-4" />
+          </div>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className={`text-2xl font-bold ${a.value}`}>{value}</div>
-        {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
-      </CardContent>
-    </Card>
+
+        <div className={`text-2xl sm:text-[26px] font-bold tracking-tight font-serif ${conf.valueText}`}>
+          {value}
+        </div>
+      </div>
+
+      <div className="mt-3 pt-2.5 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between text-xs">
+        {subtitle ? (
+          <span className="text-stone-500 font-medium truncate pr-2">{subtitle}</span>
+        ) : (
+          <span className="text-stone-400 text-[11px]">Mall System</span>
+        )}
+
+        {href && (
+          <span className="text-[11px] font-semibold text-stone-400 group-hover:text-[#d4af37] transition-colors flex items-center gap-1 flex-shrink-0">
+            <span>Manage</span>
+            <span className="transition-transform group-hover:translate-x-0.5">→</span>
+          </span>
+        )}
+      </div>
+    </div>
   )
 
   if (href) {

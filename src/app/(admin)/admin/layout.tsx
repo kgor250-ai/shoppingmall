@@ -6,19 +6,15 @@ import Link from 'next/link'
 import { getSession } from '@/lib/auth'
 import { logoutAction } from '@/actions/auth'
 import {
-  Building2,
-  LayoutDashboard,
-  Store,
-  Users,
-  ShoppingCart,
-  IndianRupee,
-  AlertCircle,
-  FileBarChart,
   LogOut,
   Shield,
+  Sparkles,
+  ExternalLink,
 } from 'lucide-react'
 import { GlobalBackButton } from '@/components/GlobalBackButton'
 import { AdminMobileMenu } from '@/components/AdminMobileMenu'
+import { AdminSidebarNav } from '@/components/AdminSidebarNav'
+import { AureliaMonogram } from '@/components/aurelia/AureliaMonogram'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await connection()
@@ -28,131 +24,133 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect('/api/auth/logout')
   }
 
-  const navItems = [
-    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-    { name: 'Stores', href: '/admin/stores', icon: Store },
-    { name: 'Store Owners', href: '/admin/owners', icon: Users },
-    { name: 'Employees', href: '/admin/employees', icon: Users },
-    { name: 'Customers', href: '/admin/customers', icon: Users },
-    { name: 'Categories', href: '/admin/categories', icon: ShoppingCart },
-    { name: 'Mall Layout', href: '/admin/layout-management', icon: Building2 },
-    { name: 'Rent', href: '/admin/rent', icon: IndianRupee },
-    { name: 'Complaints', href: '/admin/complaints', icon: AlertCircle },
-    { name: 'Reports', href: '/admin/reports', icon: FileBarChart },
-  ]
-
   return (
-    <div className="h-screen w-full flex overflow-hidden" style={{ background: '#f1f5f9' }}>
-      {/* ── Sidebar (desktop) ── */}
+    <div className="h-screen w-full flex overflow-hidden bg-stone-100 dark:bg-stone-950 font-sans">
+      {/* ── Luxury Sidebar (Desktop) ── */}
       <aside
-        className="w-60 hidden md:flex flex-col flex-shrink-0 h-screen overflow-hidden"
+        className="w-64 hidden md:flex flex-col flex-shrink-0 h-screen overflow-hidden select-none"
         style={{
-          background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
-          borderRight: '1px solid #1e3a5f',
+          background: 'radial-gradient(ellipse at 50% 0%, #1c150c 0%, #0d0c0a 60%, #060504 100%)',
+          borderRight: '1px solid rgba(212, 175, 55, 0.22)',
+          boxShadow: '4px 0 24px rgba(0, 0, 0, 0.4)',
         }}
       >
-        {/* Brand */}
+        {/* Brand Header */}
         <div
-          className="h-16 flex items-center px-5 gap-3 flex-shrink-0"
-          style={{ borderBottom: '1px solid #1e3a5f' }}
+          className="h-16 flex items-center px-4 gap-3 flex-shrink-0 relative overflow-hidden"
+          style={{ borderBottom: '1px solid rgba(212, 175, 55, 0.18)' }}
         >
-          <div
-            className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}
-          >
-            <Building2 className="h-4 w-4 text-white" />
-          </div>
-          <div>
-            <div className="text-white font-bold text-sm leading-tight">Mall Admin</div>
-            <div className="text-blue-400 text-xs">Control Center</div>
-          </div>
+          {/* Subtle gold ambient glow */}
+          <div className="absolute -top-6 -left-6 w-24 h-24 bg-[#d4af37]/15 rounded-full blur-xl pointer-events-none" />
+
+          <Link href="/admin" className="flex items-center gap-3 group">
+            <AureliaMonogram className="h-9 w-9 drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)]" />
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="font-serif tracking-[0.25em] text-sm font-bold uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#fae8c8] via-[#e6ca85] to-[#c5a059]">
+                  AURELIA
+                </span>
+                <span className="text-[9px] px-1.5 py-0.2 rounded bg-[#d4af37]/20 border border-[#d4af37]/40 text-[#fae8c8] font-mono font-medium">
+                  ADMIN
+                </span>
+              </div>
+              <p className="text-[10px] tracking-[0.2em] text-[#c5a059]/80 uppercase font-light truncate -mt-0.5">
+                Control Center
+              </p>
+            </div>
+          </Link>
         </div>
 
-        {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-4 px-3 custom-dark-scrollbar overscroll-contain">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest px-2 mb-2">
-            Management
-          </p>
-          <ul className="space-y-0.5">
-            {navItems.map((item) => (
-              <li key={item.name}>
-                <Link
-                  href={item.href}
-                  className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-400 hover:bg-blue-600/20 hover:text-blue-300 transition-all gap-3 group"
-                >
-                  <item.icon className="h-4 w-4 text-slate-500 group-hover:text-blue-400 transition-colors" />
-                  {item.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* Dynamic Route-Aware Navigation */}
+        <AdminSidebarNav />
 
-        {/* Footer */}
-        <div className="p-3 flex-shrink-0 mt-auto" style={{ borderTop: '1px solid #1e3a5f' }}>
-          <div className="px-3 py-2 mb-1">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-full bg-blue-600/30 flex items-center justify-center flex-shrink-0">
-                <Shield className="h-3.5 w-3.5 text-blue-400" />
+        {/* Footer with Administrator Identity & Logout */}
+        <div
+          className="p-3 flex-shrink-0 mt-auto bg-black/40 backdrop-blur-md"
+          style={{ borderTop: '1px solid rgba(212, 175, 55, 0.15)' }}
+        >
+          <div className="px-3 py-2 mb-2 rounded-xl bg-stone-900/80 border border-white/5">
+            <div className="flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#d4af37]/30 to-[#9b7324]/30 border border-[#d4af37]/40 flex items-center justify-center flex-shrink-0">
+                <Shield className="h-4 w-4 text-[#fae8c8]" />
               </div>
-              <div className="min-w-0">
-                <div className="text-xs font-semibold text-slate-300 truncate">
-                  {session.name || 'Admin'}
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-medium text-stone-200 truncate flex items-center gap-1.5">
+                  <span>{session.name || 'System Admin'}</span>
                 </div>
-                <div className="text-xs text-slate-500 truncate">{session.email}</div>
+                <div className="text-[11px] text-stone-400 truncate">{session.email}</div>
               </div>
             </div>
           </div>
+
           <form action={logoutAction}>
             <button
               type="submit"
-              className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-lg hover:bg-red-900/30 text-slate-500 hover:text-red-400 transition-all gap-3"
+              className="flex items-center w-full px-3 py-2 text-xs font-medium rounded-xl hover:bg-rose-950/40 text-stone-400 hover:text-rose-300 border border-transparent hover:border-rose-900/40 transition-all gap-2.5 cursor-pointer"
             >
-              <LogOut className="h-4 w-4" />
-              Sign Out
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Sign Out from Admin</span>
             </button>
           </form>
         </div>
       </aside>
 
-      {/* ── Main Content ── */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
-        {/* Header */}
+      {/* ── Main Content Area ── */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden min-w-0 bg-[#faf8f5] dark:bg-stone-950">
+        {/* Top Header Bar */}
         <header
-          className="h-14 flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-10"
+          className="h-16 flex items-center justify-between px-4 md:px-7 flex-shrink-0 z-10 bg-white/95 dark:bg-stone-900/90 backdrop-blur-md"
           style={{
-            background: '#ffffff',
-            borderBottom: '1px solid #e2e8f0',
-            boxShadow: '0 1px 3px 0 rgba(0,0,0,0.06)',
+            borderBottom: '1px solid rgba(226, 232, 240, 0.9)',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.03)',
           }}
         >
-          <div className="flex items-center gap-3">
-            {/* Mobile menu button */}
+          <div className="flex items-center gap-3.5">
+            {/* Mobile menu trigger */}
             <AdminMobileMenu session={session} />
+
             <div>
-              <span className="font-semibold text-slate-800 text-sm">
-                Welcome, {session.name || 'Admin'}
-              </span>
-              <span className="hidden md:inline text-slate-400 text-xs ml-2">
-                — Administrator
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-stone-900 dark:text-stone-100 text-sm">
+                  Welcome, {session.name || 'Admin'}
+                </span>
+                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium text-stone-500 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-full">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  System Operational
+                </span>
+              </div>
+              <p className="hidden md:block text-[11px] text-stone-400">
+                Aurelia Shopping Mall Management &amp; Analytics
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
-              style={{ background: '#dbeafe', color: '#1d4ed8' }}
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              target="_blank"
+              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-[#d4af37]/40 bg-[#d4af37]/10 text-stone-800 dark:text-[#fae8c8] hover:bg-[#d4af37]/20 transition-all"
             >
-              <Shield className="h-3 w-3" />
-              Admin
+              <Sparkles className="h-3.5 w-3.5 text-[#d4af37]" />
+              <span>View Mall</span>
+              <ExternalLink className="h-3 w-3 opacity-60" />
+            </Link>
+
+            <div className="flex items-center gap-2 pl-2 border-l border-stone-200 dark:border-stone-800">
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-stone-900 text-stone-100 border border-[#d4af37]/50 shadow-sm">
+                <Shield className="h-3.5 w-3.5 text-[#d4af37]" />
+                <span className="tracking-wide">Admin</span>
+              </div>
             </div>
           </div>
         </header>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar overscroll-contain">
-          <GlobalBackButton />
-          {children}
+        {/* Scrollable Page Content */}
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar overscroll-contain">
+          <div className="max-w-7xl mx-auto space-y-6">
+            <GlobalBackButton />
+            {children}
+          </div>
         </main>
       </div>
     </div>
