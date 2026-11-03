@@ -116,11 +116,10 @@ export function AdminMobileMenu({ session }: { session: { name?: string; email?:
                   <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
-                      active
+                    className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${active
                         ? 'bg-gradient-to-r from-[#d4af37]/25 to-transparent text-[#fae8c8] font-bold border-l-3 border-[#d4af37] shadow-sm'
                         : 'text-stone-300 hover:text-stone-100 hover:bg-stone-850/60'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-3">
                       <Icon className={`h-4 w-4 ${active ? 'text-[#d4af37]' : 'text-stone-400'}`} />

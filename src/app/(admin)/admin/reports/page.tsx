@@ -14,14 +14,13 @@ import {
 
 export const dynamic = 'force-dynamic'
 
-interface Props {
-  searchParams?: Promise<{ filter?: string }>
-}
-
-export default async function AdminReportsPage({ searchParams }: Props) {
+export default async function AdminReportsPage(props: {
+  params?: Promise<Record<string, string | string[] | undefined>>
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}) {
   await connection()
 
-  const params = searchParams ? await searchParams : {}
+  const params = props.searchParams ? await props.searchParams : {}
   const activeFilter = params.filter === 'today' ? 'today' : params.filter === 'month' ? 'month' : 'all'
 
   const now = new Date()

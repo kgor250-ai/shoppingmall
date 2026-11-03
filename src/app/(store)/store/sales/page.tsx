@@ -18,16 +18,15 @@ import {
 
 export const dynamic = 'force-dynamic'
 
-interface Props {
-  searchParams?: Promise<{ filter?: string }>
-}
-
-export default async function StoreSalesPage({ searchParams }: Props) {
+export default async function StoreSalesPage(props: {
+  params?: Promise<Record<string, string | string[] | undefined>>
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}) {
   await connection()
   const session = await getSession()
   if (!session?.storeId) redirect('/login')
 
-  const params = searchParams ? await searchParams : {}
+  const params = props.searchParams ? await props.searchParams : {}
   const activeFilter = params.filter === 'today' ? 'today' : params.filter === 'month' ? 'month' : 'all'
 
   const now = new Date()
