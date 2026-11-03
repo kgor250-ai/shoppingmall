@@ -48,6 +48,7 @@ export function UserProfileDrawer({
 
   const isStoreOwner = currentUser?.role === 'STORE_OWNER'
   const isAdmin = currentUser?.role === 'ADMIN'
+  const isCustomer = currentUser?.role === 'CUSTOMER'
   const isGuest = !currentUser
 
   return (
@@ -57,7 +58,13 @@ export function UserProfileDrawer({
         <div>
           <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6">
             <span className="font-serif tracking-[0.25em] text-sm text-[#fbf8f3] uppercase">
-              {isStoreOwner ? 'MERCHANT PORTAL' : isAdmin ? 'MALL ADMINISTRATION' : 'YOUR AURELIA'}
+              {isStoreOwner
+                ? 'MERCHANT PORTAL'
+                : isAdmin
+                ? 'MALL ADMINISTRATION'
+                : isCustomer
+                ? 'VIP INNER CIRCLE'
+                : 'YOUR AURELIA'}
             </span>
             <button
               onClick={onClose}
@@ -175,8 +182,55 @@ export function UserProfileDrawer({
                 </Link>
               </div>
             </div>
+          ) : isCustomer ? (
+            /* AUTHENTICATED VIP CUSTOMER PROFILE CARD */
+            <div className="mb-6 p-5 rounded-2xl bg-gradient-to-br from-[#1c160c] via-[#15120e] to-[#0d0c0a] border border-[#d4af37]/40 shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-[#d4af37]/10 rounded-full blur-2xl pointer-events-none" />
+
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14 rounded-full bg-gradient-to-tr from-[#2a1d0d] via-[#7a5c1a] to-[#d4af37] border border-[#fae8c8] flex items-center justify-center font-serif text-2xl text-stone-950 font-bold shadow-lg flex-shrink-0">
+                  {currentUser.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-serif text-xl text-[#fbf8f3]">{currentUser.name}</h3>
+                    <Crown className="h-4 w-4 text-[#d4af37]" />
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#d4af37]/20 text-[#fae8c8] border border-[#d4af37]/40 text-[9px] font-sans tracking-widest uppercase font-semibold inline-block mt-1">
+                    Aurelia VIP Club · Black Tier
+                  </span>
+                </div>
+              </div>
+
+              {/* Customer Details */}
+              <div className="mt-4 pt-3.5 border-t border-white/10 space-y-2 text-xs font-sans">
+                <div className="flex justify-between items-center text-stone-300">
+                  <span className="text-stone-400">Registered Email:</span>
+                  <span className="font-mono text-stone-200 text-[11px]">{currentUser.email}</span>
+                </div>
+                {currentUser.phone && (
+                  <div className="flex justify-between items-center text-stone-300">
+                    <span className="text-stone-400">VIP Phone:</span>
+                    <span className="text-stone-300 text-[11px]">{currentUser.phone}</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center text-stone-300">
+                  <span className="text-stone-400">VIP Reward Points:</span>
+                  <span className="text-[#fae8c8] font-bold text-sm">
+                    {currentUser.points ? `${currentUser.points.toLocaleString()} pts` : '24,850 pts'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-stone-300">
+                  <span className="text-stone-400">Privilege Status:</span>
+                  <span className="text-emerald-400 font-medium flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3" />
+                    <span>Verified Active VIP</span>
+                  </span>
+                </div>
+              </div>
+            </div>
           ) : (
-            /* GUEST / CUSTOMER PROFILE CARD */
+            /* GUEST VISITOR PROFILE CARD */
             <div className="mb-6 p-5 rounded-2xl bg-white/[0.03] border border-white/10">
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 rounded-full bg-gradient-to-tr from-[#1f1b29] to-[#c5a059]/50 border border-[#c5a059] flex items-center justify-center font-serif text-2xl text-[#fbf8f3] shadow-lg flex-shrink-0">
@@ -184,24 +238,23 @@ export function UserProfileDrawer({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-serif text-xl text-[#fbf8f3]">Gor Kishan</h3>
-                    <Crown className="h-4 w-4 text-[#c5a059]" />
+                    <h3 className="font-serif text-xl text-[#fbf8f3]">Guest Visitor</h3>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#c5a059]/20 text-[#e6ca85] text-[9px] font-sans tracking-widest uppercase font-semibold inline-block mt-1">
-                    VIP Guest Demo · Black Tier
+                  <span className="px-2.5 py-0.5 rounded-full bg-white/10 text-stone-300 text-[9px] font-sans tracking-widest uppercase font-semibold inline-block mt-1">
+                    Exploring Curated Collections
                   </span>
                 </div>
               </div>
 
               {/* Login Switcher Hint */}
               <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-stone-400">
-                <span>Are you a Store Owner?</span>
+                <span>Sign in for VIP rewards (500 pts):</span>
                 <Link
                   href="/login"
                   onClick={onClose}
-                  className="text-[#c5a059] hover:text-[#fae8c8] font-medium flex items-center gap-1"
+                  className="text-[#c5a059] hover:text-[#fae8c8] font-semibold flex items-center gap-1"
                 >
-                  <span>Sign In Here</span>
+                  <span>Sign In / Register</span>
                   <ChevronRight className="h-3 w-3" />
                 </Link>
               </div>
@@ -213,7 +266,7 @@ export function UserProfileDrawer({
           ───────────────────────────────────────────────────────────── */}
           <div className="space-y-3">
             {/* Rewards points only shown for Customer/Guest, NOT for Store Owner */}
-            {isGuest && (
+            {(isGuest || isCustomer) && (
               <div
                 onClick={() => {
                   onClose()
@@ -337,7 +390,7 @@ export function UserProfileDrawer({
               className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#fae8c8] via-[#d4af37] to-[#9b7324] text-stone-950 text-xs font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all cursor-pointer shadow-lg shadow-[#d4af37]/25"
             >
               <LogIn className="h-4 w-4" />
-              <span>Sign In (Owner / Admin)</span>
+              <span>Sign In / VIP Register</span>
             </Link>
           )}
 

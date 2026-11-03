@@ -19,6 +19,7 @@ import {
   Building2,
   ExternalLink,
   LogOut,
+  Activity,
 } from 'lucide-react'
 import { AureliaMonogram } from '@/components/aurelia/AureliaMonogram'
 
@@ -45,6 +46,7 @@ export function AdminMobileMenu({ session }: { session: { name?: string; email?:
 
   const navItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Customer Activity Logs', href: '/admin/user-logins', icon: Activity },
     { name: 'Stores Directory', href: '/admin/stores', icon: Store },
     { name: 'Store Owners', href: '/admin/owners', icon: UserCheck },
     { name: 'Employees', href: '/admin/employees', icon: Users },

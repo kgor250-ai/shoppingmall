@@ -235,18 +235,32 @@ export function HeroAndPersonalized({
                   Chief administrator overseeing mall retail tenants, layout, and aggregate revenue.
                 </p>
               </div>
-            ) : (
-              /* Guest / Customer Salutation */
+            ) : currentUser?.role === 'CUSTOMER' ? (
+              /* Authenticated Customer Salutation */
               <div>
                 <div className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.28em] text-[#c5a059] mb-3">
                   <Crown className="h-3.5 w-3.5" />
-                  <span>Private Member Suite · Tier Black</span>
+                  <span>Aurelia VIP Inner Circle · Black Tier</span>
                 </div>
-                <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#fbf8f3] font-light tracking-wide leading-tight">
-                  {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 18 ? 'Good Afternoon' : 'Good Evening'}, <span className="italic font-normal text-[#e6ca85]">Gor Kishan.</span>
+                <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-[#fbf8f3] font-light tracking-wide leading-tight">
+                  {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 18 ? 'Good Afternoon' : 'Good Evening'}, <span className="italic font-normal text-[#e6ca85]">{currentUser.name}.</span>
                 </h2>
                 <p className="text-sm md:text-base text-[#e8e2d8]/60 font-sans font-light mt-2">
-                  Your curated AURELIA experience awaits. Current concierge status: <span className="text-[#c5a059]">Assigned Chauffeur On-Site</span>.
+                  Welcome to Aurelia Haute Destination. Your VIP dining privileges and private suite access are active.
+                </p>
+              </div>
+            ) : (
+              /* Guest / Visitor Salutation */
+              <div>
+                <div className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.28em] text-[#c5a059] mb-3">
+                  <Crown className="h-3.5 w-3.5" />
+                  <span>Haute Destination · Curated Collections</span>
+                </div>
+                <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#fbf8f3] font-light tracking-wide leading-tight">
+                  {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 18 ? 'Good Afternoon' : 'Good Evening'}, <span className="italic font-normal text-[#e6ca85]">Guest.</span>
+                </h2>
+                <p className="text-sm md:text-base text-[#e8e2d8]/60 font-sans font-light mt-2">
+                  Your curated AURELIA experience awaits. Explore luxury flagship stores, dining, and smart mall navigation.
                 </p>
               </div>
             )}

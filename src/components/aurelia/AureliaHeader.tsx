@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { AureliaMonogram } from './AureliaMonogram'
-import { Search, MapPin, Sparkles, Shield, Compass, LogIn, LogOut, Store } from 'lucide-react'
+import { Search, MapPin, Sparkles, Shield, Compass, LogIn, LogOut, Store, Crown } from 'lucide-react'
 import { CurrentAuthUser } from '@/actions/auth'
 
 interface AureliaHeaderProps {
@@ -232,27 +232,41 @@ export function AureliaHeader({
               <span>Sign In</span>
             </Link>
           ) : (
-            /* Logged in: Quick Portal Shortcut + Direct Logout Button */
+            /* Logged in: Customer Profile or Staff Portal + Direct Logout Button */
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <Link
-                href={currentUser.dashboardUrl}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 hover:bg-emerald-900/80 hover:text-white transition-all text-xs font-semibold shadow-sm cursor-pointer"
-                title={`Open ${currentUser.role === 'ADMIN' ? 'Admin Portal' : 'Store POS'}`}
-              >
-                {currentUser.role === 'ADMIN' ? (
-                  <Shield className="h-3.5 w-3.5 text-emerald-400" />
-                ) : (
-                  <Store className="h-3.5 w-3.5 text-emerald-400" />
-                )}
-                <span className="hidden sm:inline">
-                  {currentUser.role === 'ADMIN'
-                    ? 'Admin'
-                    : currentUser.store?.name || 'Store POS'}
-                </span>
-                <span className="sm:hidden">
-                  {currentUser.role === 'ADMIN' ? 'Admin' : 'POS'}
-                </span>
-              </Link>
+              {currentUser.role === 'CUSTOMER' ? (
+                <button
+                  onClick={onOpenProfile}
+                  className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/50 text-[#fae8c8] hover:bg-[#d4af37]/30 transition-all text-xs font-semibold shadow-sm cursor-pointer"
+                  title="View VIP Customer Profile & Points"
+                >
+                  <Crown className="h-3.5 w-3.5 text-[#d4af37]" />
+                  <span className="hidden sm:inline">{currentUser.name}</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#d4af37]/30 text-amber-200 font-mono">
+                    VIP
+                  </span>
+                </button>
+              ) : (
+                <Link
+                  href={currentUser.dashboardUrl}
+                  className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 hover:bg-emerald-900/80 hover:text-white transition-all text-xs font-semibold shadow-sm cursor-pointer"
+                  title={`Open ${currentUser.role === 'ADMIN' ? 'Admin Portal' : 'Store POS'}`}
+                >
+                  {currentUser.role === 'ADMIN' ? (
+                    <Shield className="h-3.5 w-3.5 text-emerald-400" />
+                  ) : (
+                    <Store className="h-3.5 w-3.5 text-emerald-400" />
+                  )}
+                  <span className="hidden sm:inline">
+                    {currentUser.role === 'ADMIN'
+                      ? 'Admin'
+                      : currentUser.store?.name || 'Store POS'}
+                  </span>
+                  <span className="sm:hidden">
+                    {currentUser.role === 'ADMIN' ? 'Admin' : 'POS'}
+                  </span>
+                </Link>
+              )}
 
               <a
                 href="/api/auth/logout"

@@ -14,6 +14,7 @@ import {
   FileBarChart,
   ChevronRight,
   ExternalLink,
+  Activity,
 } from 'lucide-react'
 
 interface NavItem {
@@ -48,6 +49,7 @@ const navSections: NavSection[] = [
   {
     title: 'Finance & Audit',
     items: [
+      { name: 'Customer Activity Logs', href: '/admin/user-logins', icon: Activity },
       { name: 'Rent Management', href: '/admin/rent', icon: IndianRupee },
       { name: 'Reports & Sales', href: '/admin/reports', icon: FileBarChart },
       { name: 'Complaints', href: '/admin/complaints', icon: AlertCircle },
