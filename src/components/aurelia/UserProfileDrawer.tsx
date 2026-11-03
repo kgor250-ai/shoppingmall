@@ -15,13 +15,18 @@ import {
   ChevronRight,
   LogOut,
   MapPin,
+  Utensils,
+  CheckCircle2,
 } from 'lucide-react'
+import { DiningReservation } from '@/data/diningReservations'
 
 interface UserProfileDrawerProps {
   isOpen: boolean
   onClose: () => void
   onOpenWallet: () => void
   onOpenConcierge: () => void
+  onOpenReservations?: () => void
+  activeReservation?: DiningReservation | null
 }
 
 export function UserProfileDrawer({
@@ -29,12 +34,14 @@ export function UserProfileDrawer({
   onClose,
   onOpenWallet,
   onOpenConcierge,
+  onOpenReservations,
+  activeReservation,
 }: UserProfileDrawerProps) {
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-md h-full bg-[#0d0c12] border-l border-[#c5a059]/30 p-8 flex flex-col justify-between overflow-y-auto custom-dark-scrollbar shadow-2xl">
+      <div className="relative w-full max-w-md h-full bg-[#0d0c12] border-l border-[#c5a059]/30 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto custom-dark-scrollbar shadow-2xl">
         {/* Top Header & Close */}
         <div>
           <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-8">
@@ -43,7 +50,8 @@ export function UserProfileDrawer({
             </span>
             <button
               onClick={onClose}
-              className="p-2 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+              className="p-2 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              aria-label="Close Profile"
             >
               <X className="h-5 w-5" />
             </button>
@@ -97,19 +105,43 @@ export function UserProfileDrawer({
               <ChevronRight className="h-4 w-4 text-white/40 group-hover:text-[#c5a059] transition-colors" />
             </a>
 
-            <a
-              href="#dining"
-              onClick={onClose}
-              className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#c5a059]/40 hover:bg-white/[0.05] transition-all cursor-pointer flex items-center justify-between group block"
+            {/* Confirmed Dining Reservations Button */}
+            <div
+              onClick={() => {
+                onClose()
+                if (onOpenReservations) {
+                  onOpenReservations()
+                }
+              }}
+              className="p-4 rounded-xl bg-white/[0.02] border border-[#c5a059]/30 hover:border-[#c5a059] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center justify-between group relative overflow-hidden"
             >
               <div className="flex items-center gap-3">
-                <Calendar className="h-4 w-4 text-[#c5a059]" />
-                <span className="text-xs font-sans tracking-wide text-[#fbf8f3]">
-                  Confirmed Dining Reservations (Tonight)
-                </span>
+                <Calendar className="h-4 w-4 text-[#c5a059] flex-shrink-0" />
+                <div>
+                  <span className="text-xs font-sans tracking-wide text-[#fbf8f3] block font-medium">
+                    Confirmed Dining Reservations (Tonight)
+                  </span>
+                  {activeReservation && activeReservation.status === 'CONFIRMED' ? (
+                    <span className="text-[11px] text-emerald-400 font-sans flex items-center gap-1.5 mt-0.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="font-medium text-[#fbf8f3]">{activeReservation.restaurantName}</span>
+                      <span className="text-stone-400">·</span>
+                      <span>{activeReservation.timeSlot} ({activeReservation.guests})</span>
+                    </span>
+                  ) : (
+                    <span className="text-[11px] text-[#e8e2d8]/60 font-sans block mt-0.5">
+                      View or update your VIP table passes
+                    </span>
+                  )}
+                </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-white/40 group-hover:text-[#c5a059] transition-colors" />
-            </a>
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-sans font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  ACTIVE
+                </span>
+                <ChevronRight className="h-4 w-4 text-white/40 group-hover:text-[#c5a059] transition-colors" />
+              </div>
+            </div>
 
             <a
               href="#parking"

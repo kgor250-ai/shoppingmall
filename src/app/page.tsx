@@ -8,6 +8,13 @@ import { StoreDetailModal } from '@/components/aurelia/StoreDetailModal'
 import { InteractiveMallMap } from '@/components/aurelia/InteractiveMallMap'
 import { DiningExperience, RestaurantData, luxuryRestaurants } from '@/components/aurelia/DiningExperience'
 import { DiningReservationModal } from '@/components/aurelia/DiningReservationModal'
+import { ConfirmedReservationsModal } from '@/components/aurelia/ConfirmedReservationsModal'
+import {
+  DiningReservation,
+  getStoredReservations,
+  cancelStoredReservation,
+} from '@/data/diningReservations'
+import { allRestaurants } from '@/data/restaurants'
 import { ExclusiveOffers } from '@/components/aurelia/ExclusiveOffers'
 import { ExperiencesSection } from '@/components/aurelia/ExperiencesSection'
 import { SmartParking } from '@/components/aurelia/SmartParking'
@@ -36,10 +43,31 @@ export default function AureliaHomePage() {
   const [selectedStore, setSelectedStore] = useState<BrandData | null>(null)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [selectedRestaurant, setSelectedRestaurant] = useState<RestaurantData | null>(null)
+  const [editingReservation, setEditingReservation] = useState<DiningReservation | null>(null)
+  const [confirmedReservationsOpen, setConfirmedReservationsOpen] = useState(false)
+  const [reservations, setReservations] = useState<DiningReservation[]>([])
   const [conciergeOpen, setConciergeOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [walletOpen, setWalletOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+
+  // Load and synchronize dining reservations with localStorage & events
+  useEffect(() => {
+    setReservations(getStoredReservations())
+
+    const handleSync = (e: any) => {
+      if (e?.detail) {
+        setReservations(e.detail)
+      } else {
+        setReservations(getStoredReservations())
+      }
+    }
+
+    window.addEventListener('aurelia_reservation_updated', handleSync)
+    return () => window.removeEventListener('aurelia_reservation_updated', handleSync)
+  }, [])
+
+  const activeReservation = reservations.find((r) => r.status === 'CONFIRMED') || null
 
   // Active section tracking for route-aware mobile dock & desktop header
   const [activeSection, setActiveSection] = useState<SectionName>('home')
@@ -103,6 +131,22 @@ export default function AureliaHomePage() {
     if (el) el.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const handleEditReservation = (res: DiningReservation) => {
+    const found =
+      allRestaurants.find(
+        (r) =>
+          r.id === res.restaurantId ||
+          r.name.toLowerCase() === res.restaurantName.toLowerCase()
+      ) || luxuryRestaurants[0]
+    setSelectedRestaurant(found)
+    setEditingReservation(res)
+    setConfirmedReservationsOpen(false)
+  }
+
+  const handleCancelReservation = (id: string) => {
+    cancelStoredReservation(id)
+  }
+
   return (
     <div className="min-h-screen bg-[#08080a] text-[#fbf8f3] font-sans selection:bg-[#c5a059] selection:text-[#0a0a0c] relative">
       {/* ── 02: SMART FLOATING HEADER (DESKTOP ROUTE-AWARE) ── */}
@@ -117,8 +161,9 @@ export default function AureliaHomePage() {
       <HeroAndPersonalized
         onSelectStore={handleSelectStoreById}
         onOpenConcierge={() => setConciergeOpen(true)}
-        onOpenDining={() => setSelectedRestaurant(luxuryRestaurants[0])}
+        onOpenDining={() => setConfirmedReservationsOpen(true)}
         onOpenWallet={() => setWalletOpen(true)}
+        activeReservation={activeReservation}
       />
 
       {/* ── 04: STORE DISCOVERY (THE COLLECTION) ── */}
@@ -137,7 +182,12 @@ export default function AureliaHomePage() {
       {/* ── 08: LUXURY DINING EXPERIENCE ── */}
       <ScrollReveal>
         <DiningExperience
-          onReserveTable={(restaurant) => setSelectedRestaurant(restaurant)}
+          onReserveTable={(restaurant) => {
+            setEditingReservation(null)
+            setSelectedRestaurant(restaurant)
+          }}
+          onViewReservation={() => setConfirmedReservationsOpen(true)}
+          activeReservations={reservations}
         />
       </ScrollReveal>
 
@@ -192,10 +242,32 @@ export default function AureliaHomePage() {
         }}
       />
 
-      {/* 08: Dining Reservation Modal */}
+      {/* 08: Dining Reservation Modal (Create / Modify) */}
       <DiningReservationModal
         restaurant={selectedRestaurant}
-        onClose={() => setSelectedRestaurant(null)}
+        initialReservation={editingReservation}
+        onClose={() => {
+          setSelectedRestaurant(null)
+          setEditingReservation(null)
+        }}
+        onSaved={() => {
+          setEditingReservation(null)
+          setSelectedRestaurant(null)
+          setConfirmedReservationsOpen(true)
+        }}
+      />
+
+      {/* 08.5: Confirmed VIP Dining Reservations Pass Modal */}
+      <ConfirmedReservationsModal
+        isOpen={confirmedReservationsOpen}
+        onClose={() => setConfirmedReservationsOpen(false)}
+        reservations={reservations}
+        onEditReservation={handleEditReservation}
+        onCancelReservation={handleCancelReservation}
+        onBrowseDining={() => {
+          setConfirmedReservationsOpen(false)
+          handleNavClick('dining', 'dining')
+        }}
       />
 
       {/* 13: Digital Wallet Modal */}
@@ -210,6 +282,8 @@ export default function AureliaHomePage() {
         onClose={() => setProfileOpen(false)}
         onOpenWallet={() => setWalletOpen(true)}
         onOpenConcierge={() => setConciergeOpen(true)}
+        onOpenReservations={() => setConfirmedReservationsOpen(true)}
+        activeReservation={activeReservation}
       />
 
       {/* Search Modal */}

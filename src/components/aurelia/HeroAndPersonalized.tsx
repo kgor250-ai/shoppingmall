@@ -16,11 +16,14 @@ import {
   MapPin,
 } from 'lucide-react'
 
+import { DiningReservation } from '@/data/diningReservations'
+
 interface HeroAndPersonalizedProps {
   onSelectStore: (storeId: string) => void
   onOpenConcierge: () => void
   onOpenDining: () => void
   onOpenWallet: () => void
+  activeReservation?: DiningReservation | null
 }
 
 export function HeroAndPersonalized({
@@ -28,6 +31,7 @@ export function HeroAndPersonalized({
   onOpenConcierge,
   onOpenDining,
   onOpenWallet,
+  activeReservation,
 }: HeroAndPersonalizedProps) {
   const [savedItems, setSavedItems] = useState<string[]>([])
 
@@ -219,13 +223,15 @@ export function HeroAndPersonalized({
                   24,850 <span className="text-xs font-sans text-[#c5a059]">pts</span>
                 </span>
               </div>
-              <div className="cursor-pointer" onClick={onOpenDining}>
-                <span className="text-[10px] uppercase tracking-widest text-[#e8e2d8]/60 font-sans block">
+              <div className="cursor-pointer group" onClick={onOpenDining} title="View Confirmed VIP Dining Pass">
+                <span className="text-[10px] uppercase tracking-widest text-[#e8e2d8]/60 font-sans block group-hover:text-[#c5a059] transition-colors">
                   Active Table
                 </span>
-                <span className="text-xs text-[#e8e2d8] font-sans flex items-center gap-1.5 mt-1">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                  L&apos;Écrin (20:00)
+                <span className="text-xs text-[#e8e2d8] font-sans flex items-center gap-1.5 mt-1 group-hover:text-white transition-colors">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  {activeReservation && activeReservation.status === 'CONFIRMED'
+                    ? `${activeReservation.restaurantName.replace("L'Écrin Céleste", "L'Écrin")} (${activeReservation.timeSlot})`
+                    : "L'Écrin (20:00)"}
                 </span>
               </div>
             </div>

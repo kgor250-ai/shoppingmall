@@ -17,15 +17,22 @@ import {
 } from 'lucide-react'
 import { allRestaurants } from '@/data/restaurants'
 import { Restaurant } from '@/data/types'
+import { DiningReservation } from '@/data/diningReservations'
 
 export type RestaurantData = Restaurant
 export const luxuryRestaurants = allRestaurants
 
 interface DiningExperienceProps {
   onReserveTable: (restaurant: Restaurant) => void
+  onViewReservation?: (restaurantId: string) => void
+  activeReservations?: DiningReservation[]
 }
 
-export function DiningExperience({ onReserveTable }: DiningExperienceProps) {
+export function DiningExperience({
+  onReserveTable,
+  onViewReservation,
+  activeReservations = [],
+}: DiningExperienceProps) {
   const [selectedCuisine, setSelectedCuisine] = useState('ALL')
   const [vegOnly, setVegOnly] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -208,13 +215,51 @@ export function DiningExperience({ onReserveTable }: DiningExperienceProps) {
 
                   {/* Reservation CTA Button */}
                   <div>
-                    <button
-                      onClick={() => onReserveTable(res)}
-                      className="w-full py-4 rounded-full bg-gradient-to-r from-[#d4af37] via-[#c5a059] to-[#9a7837] text-[#0a0a0c] text-xs font-sans uppercase tracking-[0.25em] font-bold hover:shadow-[0_0_25px_rgba(197,160,89,0.5)] transition-all flex items-center justify-center gap-2 group-hover:scale-[1.01]"
-                    >
-                      <Calendar className="h-4 w-4" />
-                      <span>Reserve a Table</span>
-                    </button>
+                    {(() => {
+                      const existingRes = activeReservations.find(
+                        (r) =>
+                          (r.restaurantId === res.id ||
+                            r.restaurantName.toLowerCase() === res.name.toLowerCase()) &&
+                          r.status === 'CONFIRMED'
+                      )
+
+                      if (existingRes) {
+                        return (
+                          <div className="space-y-2">
+                            <div className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 flex items-center justify-between text-xs">
+                              <span className="flex items-center gap-1.5 text-emerald-300 font-medium">
+                                <CheckCircle className="h-3.5 w-3.5 text-emerald-400" />
+                                <span>Table Reserved ({existingRes.timeSlot})</span>
+                              </span>
+                              <span className="text-stone-400 font-mono text-[11px]">
+                                {existingRes.guests}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() =>
+                                onViewReservation
+                                  ? onViewReservation(res.id)
+                                  : onReserveTable(res)
+                              }
+                              className="w-full py-3.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-sans uppercase tracking-[0.2em] font-bold hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                            >
+                              <Calendar className="h-4 w-4" />
+                              <span>View / Modify Pass</span>
+                            </button>
+                          </div>
+                        )
+                      }
+
+                      return (
+                        <button
+                          onClick={() => onReserveTable(res)}
+                          className="w-full py-4 rounded-full bg-gradient-to-r from-[#d4af37] via-[#c5a059] to-[#9a7837] text-[#0a0a0c] text-xs font-sans uppercase tracking-[0.25em] font-bold hover:shadow-[0_0_25px_rgba(197,160,89,0.5)] transition-all flex items-center justify-center gap-2 group-hover:scale-[1.01] cursor-pointer"
+                        >
+                          <Calendar className="h-4 w-4" />
+                          <span>Reserve a Table</span>
+                        </button>
+                      )
+                    })()}
                     <p className="text-center text-[10px] text-[#e8e2d8]/50 font-sans mt-2">
                       Priority seating guaranteed for Black Member Gor Kishan
                     </p>
