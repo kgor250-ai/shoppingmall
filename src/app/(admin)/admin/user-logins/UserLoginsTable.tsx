@@ -351,3 +351,4 @@ export function UserLoginsTable({ initialLogs }: UserLoginsTableProps) {
     </div>
   )
 }
+

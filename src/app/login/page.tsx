@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useRef, useState } from 'react'
+import { useActionState, useState } from 'react'
 import Link from 'next/link'
 import { loginAction, registerCustomerAction } from '@/actions/auth'
 import { Button } from '@/components/ui/button'
@@ -18,11 +18,12 @@ import {
   ArrowLeft,
   AlertCircle,
   CheckCircle2,
-  Sparkles,
   Phone,
-  ShoppingBag,
-  Store,
   Gift,
+  ChevronDown,
+  ChevronUp,
+  Store,
+  Sparkles,
 } from 'lucide-react'
 
 // Elegant Aurelia Signature Gold Monogram Emblem
@@ -71,8 +72,8 @@ function AureliaEmblem({ className = 'h-14 w-14' }: { className?: string }) {
 }
 
 export default function LoginPage() {
-  const [activeTab, setActiveTab] = useState<'CUSTOMER' | 'STAFF'>('CUSTOMER')
-  const [customerMode, setCustomerMode] = useState<'SIGNIN' | 'REGISTER'>('SIGNIN')
+  const [isRegisterMode, setIsRegisterMode] = useState(false)
+  const [showDemoAccess, setShowDemoAccess] = useState(false)
 
   const [loginState, loginFormAction, loginPending] = useActionState(loginAction, undefined)
   const [registerState, registerFormAction, registerPending] = useActionState(registerCustomerAction, undefined)
@@ -87,14 +88,14 @@ export default function LoginPage() {
 
   const isPending = loginPending || registerPending
 
-  // Only fills the credentials into the fields — DOES NOT auto-submit.
-  // The user must review/insert details and explicitly click the button!
+  // Only fills credentials into fields without auto-submitting
   const handleInsertCredentials = (email: string, pass: string, roleName: string) => {
     if (isPending) return
+    setIsRegisterMode(false)
     setClientError(null)
     setEmailValue(email)
     setPasswordValue(pass)
-    setFillNotice(`${roleName} details inserted! Please click "Sign In" below.`)
+    setFillNotice(`${roleName} details filled! Click "Sign In" below.`)
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -106,7 +107,7 @@ export default function LoginPage() {
     const email = emailValue.trim()
     const password = passwordValue.trim()
 
-    if (activeTab === 'CUSTOMER' && customerMode === 'REGISTER') {
+    if (isRegisterMode) {
       const name = nameValue.trim()
       if (!name) {
         e.preventDefault()
@@ -117,13 +118,13 @@ export default function LoginPage() {
 
     if (!email) {
       e.preventDefault()
-      setClientError('Please enter your email address before continuing.')
+      setClientError('Please enter your email address.')
       return
     }
 
     if (!password) {
       e.preventDefault()
-      setClientError('Please enter your password before continuing.')
+      setClientError('Please enter your password.')
       return
     }
 
@@ -131,11 +132,7 @@ export default function LoginPage() {
     setFillNotice(null)
   }
 
-  const activeError =
-    clientError ||
-    (activeTab === 'CUSTOMER' && customerMode === 'REGISTER'
-      ? registerState?.error
-      : loginState?.error)
+  const activeError = clientError || (isRegisterMode ? registerState?.error : loginState?.error)
 
   return (
     <div
@@ -158,7 +155,7 @@ export default function LoginPage() {
         }}
       />
 
-      <div className="relative w-full max-w-[450px] z-10 animate-in fade-in duration-500">
+      <div className="relative w-full max-w-[420px] z-10 animate-in fade-in duration-500">
         {/* Return to mall link */}
         <div className="mb-3 flex justify-between items-center">
           <Link
@@ -174,7 +171,7 @@ export default function LoginPage() {
           </span>
         </div>
 
-        {/* Main Glassmorphic Card */}
+        {/* Main Glassmorphic Card (100% Private & Clean — No Public Role Tabs) */}
         <div
           className="rounded-[26px] p-6 sm:p-8 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.95)] border border-[#d4af37]/35 relative overflow-hidden backdrop-blur-2xl"
           style={{
@@ -197,97 +194,35 @@ export default function LoginPage() {
             <p className="tracking-[0.3em] text-[10px] uppercase text-[#c5a059]/90 font-medium -mt-0.5">
               SHOPPING MALL
             </p>
+
+            <h2 className="text-lg font-normal text-white tracking-wide mt-4">
+              {isRegisterMode ? 'Create Your Account' : 'Welcome to Aurelia'}
+            </h2>
+            <p className="text-stone-400 text-xs mt-0.5">
+              {isRegisterMode
+                ? 'Join Aurelia VIP Club & claim exclusive rewards'
+                : 'Enter your credentials to continue'}
+            </p>
           </div>
 
-          {/* ── TOP ROLE SELECTOR TABS ── */}
-          <div className="grid grid-cols-2 p-1 bg-black/60 rounded-xl border border-white/10 mt-5">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('CUSTOMER')
-                setClientError(null)
-                setFillNotice(null)
-              }}
-              className={`py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                activeTab === 'CUSTOMER'
-                  ? 'bg-gradient-to-r from-[#d4af37] to-[#b38728] text-stone-950 shadow-md font-bold'
-                  : 'text-stone-400 hover:text-stone-200'
-              }`}
-            >
-              <ShoppingBag className="h-3.5 w-3.5" />
-              <span>Shopper / Customer</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('STAFF')
-                setClientError(null)
-                setFillNotice(null)
-              }}
-              className={`py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                activeTab === 'STAFF'
-                  ? 'bg-gradient-to-r from-[#d4af37] to-[#b38728] text-stone-950 shadow-md font-bold'
-                  : 'text-stone-400 hover:text-stone-200'
-              }`}
-            >
-              <Store className="h-3.5 w-3.5" />
-              <span>Staff / Merchant</span>
-            </button>
-          </div>
-
-          {/* Subheader / Mode Switcher for Customer */}
-          {activeTab === 'CUSTOMER' ? (
-            <div className="mt-4">
-              <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                <span className="text-xs text-stone-300 font-medium">
-                  {customerMode === 'SIGNIN' ? 'Welcome Back, Shopper' : 'Create VIP Account'}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCustomerMode(customerMode === 'SIGNIN' ? 'REGISTER' : 'SIGNIN')
-                    setClientError(null)
-                    setFillNotice(null)
-                  }}
-                  className="text-xs text-[#d4af37] hover:text-[#fae8c8] font-semibold underline underline-offset-2 cursor-pointer transition-colors"
-                >
-                  {customerMode === 'SIGNIN' ? 'New here? Register' : 'Have an account? Sign In'}
-                </button>
-              </div>
-
-              {customerMode === 'REGISTER' && (
-                <div className="mt-2 p-2.5 rounded-xl bg-amber-950/40 border border-[#d4af37]/40 flex items-center gap-2 text-xs text-[#fae8c8]">
-                  <Gift className="h-4 w-4 text-[#d4af37] flex-shrink-0 animate-bounce" />
-                  <span>
-                    <strong>500 Welcome VIP Points</strong> will be credited on signup!
-                  </span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="mt-4 pb-1 text-center">
-              <h2 className="text-sm font-semibold text-stone-200 tracking-wide">
-                Staff & Merchant Portal
-              </h2>
-              <p className="text-[11px] text-stone-400 mt-0.5">
-                Authorized Store Owners and Mall Administrators
-              </p>
+          {/* Welcome Bonus Notice in Register Mode */}
+          {isRegisterMode && (
+            <div className="mt-3.5 p-2.5 rounded-xl bg-amber-950/40 border border-[#d4af37]/40 flex items-center gap-2 text-xs text-[#fae8c8]">
+              <Gift className="h-4 w-4 text-[#d4af37] flex-shrink-0 animate-bounce" />
+              <span>
+                <strong>500 Welcome VIP Points</strong> will be credited on signup!
+              </span>
             </div>
           )}
 
-          {/* ── FORM ── */}
+          {/* Unified Smart Form (Automatically routes based on role) */}
           <form
-            action={
-              activeTab === 'CUSTOMER' && customerMode === 'REGISTER'
-                ? registerFormAction
-                : loginFormAction
-            }
+            action={isRegisterMode ? registerFormAction : loginFormAction}
             onSubmit={handleSubmit}
-            className="space-y-3.5 mt-4"
+            className="space-y-3.5 mt-5"
           >
-            {/* Full Name field (Only in Register mode) */}
-            {activeTab === 'CUSTOMER' && customerMode === 'REGISTER' && (
+            {/* Full Name (Only in Register mode) */}
+            {isRegisterMode && (
               <div className="space-y-1">
                 <Label htmlFor="name" className="text-stone-300 text-xs font-medium flex items-center gap-1.5">
                   <User className="h-3.5 w-3.5 text-[#d4af37]" />
@@ -310,7 +245,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Email Address Input */}
+            {/* Email Address */}
             <div className="space-y-1">
               <Label htmlFor="email" className="text-stone-300 text-xs font-medium flex items-center gap-1.5">
                 <User className="h-3.5 w-3.5 text-[#d4af37]" />
@@ -320,11 +255,7 @@ export default function LoginPage() {
                 id="email"
                 name="email"
                 type="email"
-                placeholder={
-                  activeTab === 'CUSTOMER'
-                    ? 'Enter your customer email'
-                    : 'admin1@gmail.com / owner1@gmail.com'
-                }
+                placeholder="Enter your email"
                 required
                 disabled={isPending}
                 value={emailValue}
@@ -337,12 +268,12 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Phone Number Input (Only in Register mode) */}
-            {activeTab === 'CUSTOMER' && customerMode === 'REGISTER' && (
+            {/* Phone Number (Only in Register mode) */}
+            {isRegisterMode && (
               <div className="space-y-1">
                 <Label htmlFor="phone" className="text-stone-300 text-xs font-medium flex items-center gap-1.5">
                   <Phone className="h-3.5 w-3.5 text-[#d4af37]" />
-                  <span>Mobile Phone (for VIP notifications)</span>
+                  <span>Mobile Phone (Optional)</span>
                 </Label>
                 <Input
                   id="phone"
@@ -360,7 +291,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Password Input with Eye Toggle */}
+            {/* Password with Eye Toggle */}
             <div className="space-y-1">
               <Label htmlFor="password" className="text-stone-300 text-xs font-medium flex items-center gap-1.5">
                 <Lock className="h-3.5 w-3.5 text-[#d4af37]" />
@@ -372,7 +303,7 @@ export default function LoginPage() {
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder={
-                    customerMode === 'REGISTER'
+                    isRegisterMode
                       ? 'Create a secure password (min 6 chars)'
                       : 'Enter your password'
                   }
@@ -398,7 +329,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Insertion confirmation feedback notice */}
+            {/* Notice / Feedback */}
             {fillNotice && !activeError && (
               <div
                 role="status"
@@ -435,84 +366,113 @@ export default function LoginPage() {
                 <>
                   <Loader2 className="h-4 w-4 animate-spin text-stone-950" />
                   <span>
-                    {activeTab === 'CUSTOMER' && customerMode === 'REGISTER'
-                      ? 'Creating VIP Account...'
-                      : 'Authenticating...'}
+                    {isRegisterMode ? 'Creating Account...' : 'Authenticating...'}
                   </span>
                 </>
               ) : (
                 <>
                   <span>
-                    {activeTab === 'CUSTOMER' && customerMode === 'REGISTER'
-                      ? 'Create VIP Account & Claim 500 Pts'
-                      : 'Sign In →'}
+                    {isRegisterMode ? 'Create Account & Claim 500 Pts' : 'Sign In →'}
                   </span>
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </>
               )}
             </Button>
 
-            {/* Quick Access Divider */}
-            <div className="flex items-center gap-3 pt-2 pb-0.5">
-              <div className="flex-1 h-[1px] bg-white/10" />
-              <span className="text-[10px] uppercase tracking-wider text-stone-500 font-medium">
-                Auto-Fill Demo Details
-              </span>
-              <div className="flex-1 h-[1px] bg-white/10" />
+            {/* Mode Switcher Link */}
+            <div className="text-center pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsRegisterMode(!isRegisterMode)
+                  setClientError(null)
+                  setFillNotice(null)
+                }}
+                className="text-xs text-[#d4af37] hover:text-[#fae8c8] font-medium transition-colors cursor-pointer"
+              >
+                {isRegisterMode
+                  ? 'Already have an account? Sign In'
+                  : "Don't have an account? Create VIP Account"}
+              </button>
             </div>
+          </form>
 
-            {/* Quick Access Buttons */}
-            {activeTab === 'CUSTOMER' ? (
-              <div>
+          {/* ── DISCREET DEMO ACCESS (Folded by default for privacy) ── */}
+          <div className="mt-5 pt-3 border-t border-white/10">
+            <button
+              type="button"
+              onClick={() => setShowDemoAccess(!showDemoAccess)}
+              className="w-full flex items-center justify-between text-[11px] text-stone-500 hover:text-stone-300 py-1 transition-colors cursor-pointer"
+            >
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="h-3 w-3 text-[#d4af37]" />
+                <span>Quick Demo Credentials</span>
+              </span>
+              {showDemoAccess ? (
+                <ChevronUp className="h-3.5 w-3.5" />
+              ) : (
+                <ChevronDown className="h-3.5 w-3.5" />
+              )}
+            </button>
+
+            {showDemoAccess && (
+              <div className="mt-2.5 space-y-1.5 animate-in fade-in duration-200">
                 <button
                   type="button"
                   disabled={isPending}
-                  onClick={() => {
-                    setCustomerMode('SIGNIN')
+                  onClick={() =>
                     handleInsertCredentials('kishan@gmail.com', 'kishan123', 'VIP Shopper (Gor Kishan)')
-                  }}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-[#d4af37]/40 bg-stone-900/90 text-stone-200 text-xs font-semibold hover:bg-[#d4af37]/15 hover:border-[#d4af37] hover:text-white transition-all disabled:opacity-50 cursor-pointer shadow-sm group"
-                  title="Fill VIP Shopper Gor Kishan demo credentials"
+                  }
+                  className="w-full flex items-center justify-between py-2 px-3 rounded-xl border border-white/5 bg-stone-900/60 hover:bg-[#d4af37]/10 hover:border-[#d4af37]/40 text-stone-300 text-xs transition-all cursor-pointer"
                 >
-                  <Crown className="h-3.5 w-3.5 text-[#d4af37] transition-transform group-hover:scale-110" />
-                  <span>Fill VIP Customer (Gor Kishan)</span>
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-2.5">
-                <button
-                  type="button"
-                  disabled={isPending}
-                  onClick={() => handleInsertCredentials('admin1@gmail.com', 'admin123', 'Admin')}
-                  className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-[#d4af37]/35 bg-stone-900/80 text-stone-200 text-xs font-medium hover:bg-[#d4af37]/15 hover:border-[#d4af37]/60 hover:text-white transition-all disabled:opacity-50 cursor-pointer shadow-sm group"
-                  title="Fill Admin email and password"
-                >
-                  <ShieldCheck className="h-3.5 w-3.5 text-[#d4af37] transition-transform group-hover:scale-110" />
-                  <span>Fill Admin ID</span>
+                  <span className="flex items-center gap-2">
+                    <Crown className="h-3.5 w-3.5 text-[#d4af37]" />
+                    <span>Customer Demo (Gor Kishan)</span>
+                  </span>
+                  <span className="text-[10px] text-stone-500 font-mono">Fill ID</span>
                 </button>
 
                 <button
                   type="button"
                   disabled={isPending}
-                  onClick={() => handleInsertCredentials('owner1@gmail.com', 'owner123', 'Store Owner')}
-                  className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-[#d4af37]/35 bg-stone-900/80 text-stone-200 text-xs font-medium hover:bg-[#d4af37]/15 hover:border-[#d4af37]/60 hover:text-white transition-all disabled:opacity-50 cursor-pointer shadow-sm group"
-                  title="Fill Owner email and password"
+                  onClick={() =>
+                    handleInsertCredentials('owner1@gmail.com', 'owner123', 'Store Owner (Fashion Hub)')
+                  }
+                  className="w-full flex items-center justify-between py-2 px-3 rounded-xl border border-white/5 bg-stone-900/60 hover:bg-emerald-950/40 hover:border-emerald-500/40 text-stone-300 text-xs transition-all cursor-pointer"
                 >
-                  <Store className="h-3.5 w-3.5 text-[#d4af37] transition-transform group-hover:scale-110" />
-                  <span>Fill Owner ID</span>
+                  <span className="flex items-center gap-2">
+                    <Store className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>Merchant Demo (Fashion Hub)</span>
+                  </span>
+                  <span className="text-[10px] text-stone-500 font-mono">Fill ID</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isPending}
+                  onClick={() =>
+                    handleInsertCredentials('admin1@gmail.com', 'admin123', 'System Administrator')
+                  }
+                  className="w-full flex items-center justify-between py-2 px-3 rounded-xl border border-white/5 bg-stone-900/60 hover:bg-blue-950/40 hover:border-blue-500/40 text-stone-300 text-xs transition-all cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <ShieldCheck className="h-3.5 w-3.5 text-blue-400" />
+                    <span>Admin Demo (System Admin)</span>
+                  </span>
+                  <span className="text-[10px] text-stone-500 font-mono">Fill ID</span>
                 </button>
               </div>
             )}
-          </form>
+          </div>
 
           {/* Footer */}
-          <div className="mt-5 pt-3.5 border-t border-white/5 text-center">
-            <p className="text-[10px] tracking-widest uppercase text-stone-400 font-light flex items-center justify-center gap-2">
+          <div className="mt-4 pt-3 border-t border-white/5 text-center">
+            <p className="text-[10px] tracking-widest uppercase text-stone-500 font-light flex items-center justify-center gap-2">
               <span>Secure</span>
               <span className="text-[#d4af37]">•</span>
               <span>Encrypted</span>
               <span className="text-[#d4af37]">•</span>
-              <span className="font-serif font-medium text-stone-300">AURELIA VIP</span>
+              <span className="font-serif font-medium text-stone-400">AURELIA PLATFORM</span>
             </p>
           </div>
         </div>

@@ -394,9 +394,8 @@ export function HeroAndPersonalized({
                       className="absolute top-4 right-4 h-9 w-9 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/80 hover:text-[#c5a059] transition-colors"
                     >
                       <Bookmark
-                        className={`h-4 w-4 ${
-                          savedItems.includes(brand.id) ? 'fill-[#c5a059] text-[#c5a059]' : ''
-                        }`}
+                        className={`h-4 w-4 ${savedItems.includes(brand.id) ? 'fill-[#c5a059] text-[#c5a059]' : ''
+                          }`}
                       />
                     </button>
 

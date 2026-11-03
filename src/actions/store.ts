@@ -20,6 +20,11 @@ export async function saveProduct(formData: FormData) {
     const existing = await prisma.product.findFirst({ where: { sku } })
     if (existing && existing.id !== id) return { error: 'SKU already exists' }
 
+    const rawDesc = (formData.get('description') as string) || ''
+    const imageUrl = (formData.get('imageUrl') as string)?.trim() || ''
+    const cleanDesc = rawDesc.replace(/\[IMG:.*?\]\s*/, '').trim()
+    const finalDescription = imageUrl ? `[IMG:${imageUrl}] ${cleanDesc}`.trim() : cleanDesc
+
     if (id) {
       // Security: verify ownership again before updating
       const product = await prisma.product.findUnique({ where: { id } })
@@ -31,7 +36,7 @@ export async function saveProduct(formData: FormData) {
           name: formData.get('name') as string,
           sku,
           categoryId: formData.get('categoryId') as string,
-          description: formData.get('description') as string,
+          description: finalDescription,
           costPrice: parseFloat(formData.get('costPrice') as string),
           sellingPrice: parseFloat(formData.get('sellingPrice') as string),
           minimumStock: parseInt(formData.get('minimumStock') as string, 10),
@@ -48,7 +53,7 @@ export async function saveProduct(formData: FormData) {
           categoryId: formData.get('categoryId') as string,
           name: formData.get('name') as string,
           sku,
-          description: formData.get('description') as string,
+          description: finalDescription,
           costPrice: parseFloat(formData.get('costPrice') as string),
           sellingPrice: parseFloat(formData.get('sellingPrice') as string),
           currentStock: initialStock,
