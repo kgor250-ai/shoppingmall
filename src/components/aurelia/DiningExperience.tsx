@@ -98,11 +98,10 @@ export function DiningExperience({
                   setSelectedCuisine(c)
                   setVisibleCount(4)
                 }}
-                className={`px-4 py-2 rounded-full text-[11px] font-sans tracking-[0.2em] uppercase transition-all duration-300 whitespace-nowrap ${
-                  selectedCuisine === c
+                className={`px-4 py-2 rounded-full text-[11px] font-sans tracking-[0.2em] uppercase transition-all duration-300 whitespace-nowrap ${selectedCuisine === c
                     ? 'bg-[#c5a059] text-[#0a0a0c] font-semibold shadow-md shadow-[#c5a059]/30'
                     : 'bg-white/[0.03] text-[#e8e2d8]/70 hover:bg-white/[0.08] hover:text-[#fbf8f3] border border-white/5'
-                }`}
+                  }`}
               >
                 {c === 'ALL' ? 'All Cuisines' : c}
               </button>
@@ -155,7 +154,7 @@ export function DiningExperience({
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0f0e15] via-transparent to-black/20 lg:hidden" />
-                  
+
                   {/* Category & Veg Badge */}
                   <div className="absolute top-6 left-6 flex items-center gap-2">
                     <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-sans uppercase tracking-[0.25em] text-[#e6ca85]">

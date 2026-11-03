@@ -14,9 +14,14 @@ import {
   ShieldCheck,
   Star,
   MapPin,
+  Shield,
+  Store,
+  LogIn,
 } from 'lucide-react'
 
 import { DiningReservation } from '@/data/diningReservations'
+import { CurrentAuthUser } from '@/actions/auth'
+import Link from 'next/link'
 
 interface HeroAndPersonalizedProps {
   onSelectStore: (storeId: string) => void
@@ -24,6 +29,7 @@ interface HeroAndPersonalizedProps {
   onOpenDining: () => void
   onOpenWallet: () => void
   activeReservation?: DiningReservation | null
+  currentUser?: CurrentAuthUser | null
 }
 
 export function HeroAndPersonalized({
@@ -32,6 +38,7 @@ export function HeroAndPersonalized({
   onOpenDining,
   onOpenWallet,
   activeReservation,
+  currentUser,
 }: HeroAndPersonalizedProps) {
   const [savedItems, setSavedItems] = useState<string[]>([])
 
@@ -200,41 +207,134 @@ export function HeroAndPersonalized({
         <div className="max-w-7xl mx-auto">
           {/* Personalized Salutation Header */}
           <div className="border-b border-white/10 pb-12 mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <div className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.28em] text-[#c5a059] mb-3">
-                <Crown className="h-3.5 w-3.5" />
-                <span>Private Member Suite · Tier Black</span>
+            {currentUser?.role === 'STORE_OWNER' ? (
+              /* Store Owner Salutation */
+              <div>
+                <div className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.28em] text-[#c5a059] mb-3">
+                  <Store className="h-3.5 w-3.5" />
+                  <span>Store Owner Portal · {currentUser.store?.name || 'Retail Merchant'}</span>
+                </div>
+                <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-[#fbf8f3] font-light tracking-wide leading-tight">
+                  {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 18 ? 'Good Afternoon' : 'Good Evening'}, <span className="italic font-normal text-[#e6ca85]">{currentUser.name}.</span>
+                </h2>
+                <p className="text-sm md:text-base text-[#e8e2d8]/60 font-sans font-light mt-2">
+                  Welcome to AURELIA. Assigned shop: <span className="text-[#fae8c8] font-medium">{currentUser.store?.name}</span> ({currentUser.store?.floor || 'Ground Floor'}). Manage your billing POS and inventory.
+                </p>
               </div>
-              <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#fbf8f3] font-light tracking-wide leading-tight">
-                {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 18 ? 'Good Afternoon' : 'Good Evening'}, <span className="italic font-normal text-[#e6ca85]">Gor Kishan.</span>
-              </h2>
-              <p className="text-sm md:text-base text-[#e8e2d8]/60 font-sans font-light mt-2">
-                Your curated AURELIA experience awaits. Current concierge status: <span className="text-[#c5a059]">Assigned Chauffeur On-Site</span>.
-              </p>
-            </div>
+            ) : currentUser?.role === 'ADMIN' ? (
+              /* Mall Administrator Salutation */
+              <div>
+                <div className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.28em] text-blue-400 mb-3">
+                  <Shield className="h-3.5 w-3.5" />
+                  <span>Mall Administration Control Center</span>
+                </div>
+                <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-[#fbf8f3] font-light tracking-wide leading-tight">
+                  {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 18 ? 'Good Afternoon' : 'Good Evening'}, <span className="italic font-normal text-blue-300">{currentUser.name || 'Administrator'}.</span>
+                </h2>
+                <p className="text-sm md:text-base text-[#e8e2d8]/60 font-sans font-light mt-2">
+                  Chief administrator overseeing mall retail tenants, layout, and aggregate revenue.
+                </p>
+              </div>
+            ) : (
+              /* Guest / Customer Salutation */
+              <div>
+                <div className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-[0.28em] text-[#c5a059] mb-3">
+                  <Crown className="h-3.5 w-3.5" />
+                  <span>Private Member Suite · Tier Black</span>
+                </div>
+                <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#fbf8f3] font-light tracking-wide leading-tight">
+                  {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 18 ? 'Good Afternoon' : 'Good Evening'}, <span className="italic font-normal text-[#e6ca85]">Gor Kishan.</span>
+                </h2>
+                <p className="text-sm md:text-base text-[#e8e2d8]/60 font-sans font-light mt-2">
+                  Your curated AURELIA experience awaits. Current concierge status: <span className="text-[#c5a059]">Assigned Chauffeur On-Site</span>.
+                </p>
+              </div>
+            )}
 
-            {/* Quick Guest Stats Card */}
-            <div className="flex items-center gap-4 bg-white/[0.03] border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
-              <div className="pr-4 border-r border-white/10 cursor-pointer" onClick={onOpenWallet}>
-                <span className="text-[10px] uppercase tracking-widest text-[#e8e2d8]/60 font-sans block">
-                  Reward Points
-                </span>
-                <span className="font-serif text-2xl text-[#fbf8f3] font-light">
-                  24,850 <span className="text-xs font-sans text-[#c5a059]">pts</span>
-                </span>
+            {/* Quick Guest / Shopkeeper Stats Card */}
+            {currentUser?.role === 'STORE_OWNER' ? (
+              /* Store Owner Quick Stats & Direct Portal Link */
+              <div className="flex items-center gap-3 bg-white/[0.03] border border-[#d4af37]/35 rounded-2xl p-4 backdrop-blur-sm shadow-lg">
+                <Link
+                  href="/store"
+                  className="pr-4 border-r border-white/10 group cursor-pointer block"
+                >
+                  <span className="text-[10px] uppercase tracking-widest text-[#e8e2d8]/60 font-sans block group-hover:text-[#c5a059] transition-colors">
+                    Store Terminal
+                  </span>
+                  <span className="font-serif text-xl text-[#fae8c8] font-medium flex items-center gap-1.5 mt-0.5">
+                    <Store className="h-4 w-4 text-[#c5a059]" />
+                    <span>Open POS →</span>
+                  </span>
+                </Link>
+
+                <div
+                  className="cursor-pointer group"
+                  onClick={onOpenDining}
+                  title="View Confirmed VIP Dining Pass"
+                >
+                  <span className="text-[10px] uppercase tracking-widest text-[#e8e2d8]/60 font-sans block group-hover:text-[#c5a059] transition-colors">
+                    Active Table
+                  </span>
+                  <span className="text-xs text-[#e8e2d8] font-sans flex items-center gap-1.5 mt-1 group-hover:text-white transition-colors">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    {activeReservation && activeReservation.status === 'CONFIRMED'
+                      ? `${activeReservation.restaurantName.replace("L'Écrin Céleste", "L'Écrin")} (${activeReservation.timeSlot})`
+                      : "L'Écrin (20:00)"}
+                  </span>
+                </div>
               </div>
-              <div className="cursor-pointer group" onClick={onOpenDining} title="View Confirmed VIP Dining Pass">
-                <span className="text-[10px] uppercase tracking-widest text-[#e8e2d8]/60 font-sans block group-hover:text-[#c5a059] transition-colors">
-                  Active Table
-                </span>
-                <span className="text-xs text-[#e8e2d8] font-sans flex items-center gap-1.5 mt-1 group-hover:text-white transition-colors">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                  {activeReservation && activeReservation.status === 'CONFIRMED'
-                    ? `${activeReservation.restaurantName.replace("L'Écrin Céleste", "L'Écrin")} (${activeReservation.timeSlot})`
-                    : "L'Écrin (20:00)"}
-                </span>
+            ) : currentUser?.role === 'ADMIN' ? (
+              /* Admin Quick Stats */
+              <div className="flex items-center gap-3 bg-white/[0.03] border border-blue-500/30 rounded-2xl p-4 backdrop-blur-sm shadow-lg">
+                <Link
+                  href="/admin"
+                  className="pr-4 border-r border-white/10 group cursor-pointer block"
+                >
+                  <span className="text-[10px] uppercase tracking-widest text-[#e8e2d8]/60 font-sans block group-hover:text-blue-400 transition-colors">
+                    Mall Admin
+                  </span>
+                  <span className="font-serif text-xl text-white font-medium flex items-center gap-1.5 mt-0.5">
+                    <Shield className="h-4 w-4 text-blue-400" />
+                    <span>Control Center →</span>
+                  </span>
+                </Link>
+                <Link
+                  href="/admin/reports"
+                  className="cursor-pointer group pr-2"
+                >
+                  <span className="text-[10px] uppercase tracking-widest text-[#e8e2d8]/60 font-sans block group-hover:text-blue-400 transition-colors">
+                    Financials
+                  </span>
+                  <span className="text-xs text-blue-300 font-sans flex items-center gap-1.5 mt-1">
+                    System Reports →
+                  </span>
+                </Link>
               </div>
-            </div>
+            ) : (
+              /* Guest / Gor Kishan VIP Stats */
+              <div className="flex items-center gap-4 bg-white/[0.03] border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="pr-4 border-r border-white/10 cursor-pointer" onClick={onOpenWallet}>
+                  <span className="text-[10px] uppercase tracking-widest text-[#e8e2d8]/60 font-sans block">
+                    Reward Points
+                  </span>
+                  <span className="font-serif text-2xl text-[#fbf8f3] font-light">
+                    24,850 <span className="text-xs font-sans text-[#c5a059]">pts</span>
+                  </span>
+                </div>
+                <div className="cursor-pointer group" onClick={onOpenDining} title="View Confirmed VIP Dining Pass">
+                  <span className="text-[10px] uppercase tracking-widest text-[#e8e2d8]/60 font-sans block group-hover:text-[#c5a059] transition-colors">
+                    Active Table
+                  </span>
+                  <span className="text-xs text-[#e8e2d8] font-sans flex items-center gap-1.5 mt-1 group-hover:text-white transition-colors">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    {activeReservation && activeReservation.status === 'CONFIRMED'
+                      ? `${activeReservation.restaurantName.replace("L'Écrin Céleste", "L'Écrin")} (${activeReservation.timeSlot})`
+                      : "L'Écrin (20:00)"}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Continue Exploring — Large Editorial Cards */}

@@ -141,6 +141,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 <Shield className="h-3.5 w-3.5 text-[#d4af37]" />
                 <span className="tracking-wide">Admin</span>
               </div>
+
+              <a
+                href="/api/auth/logout"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-xs font-medium transition-all cursor-pointer shadow-sm"
+                title="Sign out of Admin"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Sign Out</span>
+              </a>
             </div>
           </div>
         </header>

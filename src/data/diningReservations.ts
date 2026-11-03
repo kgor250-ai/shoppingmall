@@ -109,3 +109,4 @@ export function cancelStoredReservation(id: string): DiningReservation[] {
     return []
   }
 }
+

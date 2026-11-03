@@ -15,6 +15,7 @@ import {
   cancelStoredReservation,
 } from '@/data/diningReservations'
 import { allRestaurants } from '@/data/restaurants'
+import { getSessionUser, CurrentAuthUser } from '@/actions/auth'
 import { ExclusiveOffers } from '@/components/aurelia/ExclusiveOffers'
 import { ExperiencesSection } from '@/components/aurelia/ExperiencesSection'
 import { SmartParking } from '@/components/aurelia/SmartParking'
@@ -46,10 +47,20 @@ export default function AureliaHomePage() {
   const [editingReservation, setEditingReservation] = useState<DiningReservation | null>(null)
   const [confirmedReservationsOpen, setConfirmedReservationsOpen] = useState(false)
   const [reservations, setReservations] = useState<DiningReservation[]>([])
+  const [currentUser, setCurrentUser] = useState<CurrentAuthUser | null>(null)
   const [conciergeOpen, setConciergeOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [walletOpen, setWalletOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+
+  // Fetch logged-in user profile (Admin / Store Owner / Guest)
+  useEffect(() => {
+    getSessionUser().then((user) => {
+      if (user) {
+        setCurrentUser(user)
+      }
+    })
+  }, [])
 
   // Load and synchronize dining reservations with localStorage & events
   useEffect(() => {
@@ -155,15 +166,17 @@ export default function AureliaHomePage() {
         onOpenConcierge={() => setConciergeOpen(true)}
         onOpenProfile={() => setProfileOpen(true)}
         onOpenSearch={() => setSearchOpen(true)}
+        currentUser={currentUser}
       />
 
-      {/* ── 01 & 03: CINEMATIC HERO & PERSONALIZED GOR KISHAN PORTAL ── */}
+      {/* ── 01 & 03: CINEMATIC HERO & PERSONALIZED USER / MERCHANT PORTAL ── */}
       <HeroAndPersonalized
         onSelectStore={handleSelectStoreById}
         onOpenConcierge={() => setConciergeOpen(true)}
         onOpenDining={() => setConfirmedReservationsOpen(true)}
         onOpenWallet={() => setWalletOpen(true)}
         activeReservation={activeReservation}
+        currentUser={currentUser}
       />
 
       {/* ── 04: STORE DISCOVERY (THE COLLECTION) ── */}
@@ -284,6 +297,7 @@ export default function AureliaHomePage() {
         onOpenConcierge={() => setConciergeOpen(true)}
         onOpenReservations={() => setConfirmedReservationsOpen(true)}
         activeReservation={activeReservation}
+        currentUser={currentUser}
       />
 
       {/* Search Modal */}

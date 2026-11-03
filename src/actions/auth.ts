@@ -54,7 +54,8 @@ export async function loginAction(prevState: unknown, formData: FormData) {
       userId: user.id,
       role: user.role,
       email: user.email,
-      storeId: user.role === 'STORE_OWNER' ? storeId : null
+      storeId: user.role === 'STORE_OWNER' ? storeId : null,
+      name: user.name,
     })
 
     if (user.role === 'ADMIN') {
@@ -74,4 +75,59 @@ export async function loginAction(prevState: unknown, formData: FormData) {
 export async function logoutAction() {
   await clearAuthCookie()
   redirect('/login')
+}
+
+export interface CurrentAuthUser {
+  id: string
+  name: string
+  email: string
+  role: 'ADMIN' | 'STORE_OWNER' | string
+  phone?: string | null
+  store?: {
+    id: string
+    name: string
+    floor: string
+    category: string
+    status: string
+  } | null
+  dashboardUrl: string
+}
+
+export async function getSessionUser(): Promise<CurrentAuthUser | null> {
+  try {
+    const session = await getSession()
+    if (!session?.userId) return null
+
+    const user = await prisma.user.findUnique({
+      where: { id: session.userId },
+      include: {
+        stores: true,
+      },
+    })
+
+    if (!user) return null
+
+    const store = user.stores?.[0] || null
+
+    return {
+      id: user.id,
+      name: user.name || (user.role === 'ADMIN' ? 'Mall Administrator' : 'Store Owner'),
+      email: user.email,
+      role: user.role,
+      phone: user.phone,
+      store: store
+        ? {
+            id: store.id,
+            name: store.name,
+            floor: store.floor,
+            category: store.category,
+            status: store.status,
+          }
+        : null,
+      dashboardUrl: user.role === 'ADMIN' ? '/admin' : '/store',
+    }
+  } catch (error) {
+    console.error('getSessionUser error:', error)
+    return null
+  }
 }

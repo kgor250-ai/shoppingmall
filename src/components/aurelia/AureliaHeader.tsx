@@ -3,13 +3,16 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { AureliaMonogram } from './AureliaMonogram'
-import { Search, MapPin, Sparkles, Shield, Compass } from 'lucide-react'
+import { Search, MapPin, Sparkles, Shield, Compass, LogIn, LogOut, Store } from 'lucide-react'
+import { CurrentAuthUser } from '@/actions/auth'
 
 interface AureliaHeaderProps {
   onOpenConcierge: () => void
   onOpenProfile: () => void
   onOpenSearch: () => void
+  activeSection?: string
   currentSection?: string
+  currentUser?: CurrentAuthUser | null
 }
 
 const sectionTitles: Record<string, { label: string; parent?: string }> = {
@@ -44,12 +47,14 @@ export function AureliaHeader({
   onOpenConcierge,
   onOpenProfile,
   onOpenSearch,
+  activeSection: propActiveSection,
   currentSection: propSection,
+  currentUser,
 }: AureliaHeaderProps) {
   const [scrolled, setScrolled] = useState(false)
   const [internalSection, setInternalSection] = useState('hero')
 
-  const activeSection = propSection || internalSection
+  const activeSection = propSection || propActiveSection || internalSection
 
   useEffect(() => {
     // Check initial hash on mount
@@ -205,40 +210,85 @@ export function AureliaHeader({
           {/* AI Concierge Trigger */}
           <button
             onClick={onOpenConcierge}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#c5a059]/20 via-[#e6ca85]/15 to-[#c5a059]/20 border border-[#c5a059]/40 hover:border-[#c5a059] text-[11px] font-sans uppercase tracking-[0.2em] text-[#fbf8f3] font-semibold shadow-lg hover:shadow-[#c5a059]/20 transition-all duration-500 group cursor-pointer"
+            className="hidden lg:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#c5a059]/20 via-[#e6ca85]/15 to-[#c5a059]/20 border border-[#c5a059]/40 hover:border-[#c5a059] text-[11px] font-sans uppercase tracking-[0.2em] text-[#fbf8f3] font-semibold shadow-lg hover:shadow-[#c5a059]/20 transition-all duration-500 group cursor-pointer"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#e6ca85] opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#c5a059]" />
             </span>
             <Sparkles className="h-3.5 w-3.5 text-[#e6ca85] group-hover:rotate-12 transition-transform duration-300" />
-            <span className="hidden sm:inline">Concierge AURA</span>
+            <span>Concierge AURA</span>
           </button>
+
+          {/* ── PROMINENT LOGIN / LOGOUT & DASHBOARD SECTION ── */}
+          {!currentUser ? (
+            /* Clear Sign In Button when Guest */
+            <Link
+              href="/login"
+              className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-gradient-to-r from-[#fae8c8] via-[#d4af37] to-[#9b7324] text-stone-950 font-bold text-xs tracking-wider uppercase hover:brightness-110 active:scale-95 transition-all shadow-md shadow-[#d4af37]/25 cursor-pointer"
+              title="Sign in as Store Owner or Admin"
+            >
+              <LogIn className="h-3.5 w-3.5" />
+              <span>Sign In</span>
+            </Link>
+          ) : (
+            /* Logged in: Quick Portal Shortcut + Direct Logout Button */
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Link
+                href={currentUser.dashboardUrl}
+                className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 hover:bg-emerald-900/80 hover:text-white transition-all text-xs font-semibold shadow-sm cursor-pointer"
+                title={`Open ${currentUser.role === 'ADMIN' ? 'Admin Portal' : 'Store POS'}`}
+              >
+                {currentUser.role === 'ADMIN' ? (
+                  <Shield className="h-3.5 w-3.5 text-emerald-400" />
+                ) : (
+                  <Store className="h-3.5 w-3.5 text-emerald-400" />
+                )}
+                <span className="hidden sm:inline">
+                  {currentUser.role === 'ADMIN'
+                    ? 'Admin'
+                    : currentUser.store?.name || 'Store POS'}
+                </span>
+                <span className="sm:hidden">
+                  {currentUser.role === 'ADMIN' ? 'Admin' : 'POS'}
+                </span>
+              </Link>
+
+              <a
+                href="/api/auth/logout"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-rose-950/40 border border-rose-500/30 text-rose-300 hover:bg-rose-900/60 hover:text-white transition-all text-xs cursor-pointer shadow-sm"
+                title="Log out of account"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                <span className="hidden md:inline text-[11px] font-medium">Logout</span>
+              </a>
+            </div>
+          )}
 
           {/* Profile Button */}
           <button
             onClick={onOpenProfile}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-[#c5a059]/40 transition-all duration-300 text-left cursor-pointer"
-            aria-label="Open VIP Profile"
+            className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-[#c5a059]/40 transition-all duration-300 text-left cursor-pointer"
+            aria-label="Open User Profile Drawer"
           >
-            <div className="h-6 w-6 rounded-full bg-gradient-to-tr from-[#1a1512] to-[#c5a059]/50 flex items-center justify-center border border-[#c5a059]/40 text-[10px] font-serif text-[#fbf8f3]">
-              G
+            <div className="h-6 w-6 rounded-full bg-gradient-to-tr from-[#1a1512] to-[#c5a059]/50 flex items-center justify-center border border-[#c5a059]/40 text-[10px] font-serif text-[#fbf8f3] flex-shrink-0">
+              {currentUser?.name
+                ? currentUser.name.charAt(0).toUpperCase()
+                : 'G'}
             </div>
             <div className="hidden sm:flex flex-col">
-              <span className="text-[11px] font-medium leading-none text-[#fbf8f3]">Gor Kishan</span>
-              <span className="text-[8px] tracking-widest text-[#c5a059] uppercase mt-0.5">VIP Black</span>
+              <span className="text-[11px] font-medium leading-none text-[#fbf8f3] truncate max-w-[95px]">
+                {currentUser?.name || 'Gor Kishan'}
+              </span>
+              <span className="text-[8px] tracking-widest text-[#c5a059] uppercase mt-0.5 truncate max-w-[95px]">
+                {currentUser?.role === 'STORE_OWNER'
+                  ? (currentUser.store?.name || 'Owner')
+                  : currentUser?.role === 'ADMIN'
+                  ? 'Admin'
+                  : 'VIP Black'}
+              </span>
             </div>
           </button>
-
-          {/* Staff / Management Gateway Discrete Link */}
-          <Link
-            href="/admin"
-            className="p-1.5 text-white/30 hover:text-[#c5a059] transition-colors rounded-full"
-            title="Management / Staff Portal"
-            aria-label="Staff and Admin Portal"
-          >
-            <Shield className="h-3.5 w-3.5" />
-          </Link>
         </div>
       </div>
     </header>
