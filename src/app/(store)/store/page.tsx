@@ -160,7 +160,7 @@ export default async function StoreDashboard() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <DashboardCard
-            href="/store/sales"
+            href="/store/sales?filter=today"
             title="Today's Bills"
             value={formatINR(todaySales._sum.total)}
             subtitle={`${todaySales._count.id} bill${todaySales._count.id !== 1 ? 's' : ''} today`}
@@ -168,7 +168,7 @@ export default async function StoreDashboard() {
             accent="emerald"
           />
           <DashboardCard
-            href="/store/reports"
+            href="/store/sales?filter=month"
             title="Monthly Bills"
             value={formatINR(monthlySales._sum.total)}
             subtitle={`${monthlySales._count.id} bills this month`}
@@ -176,7 +176,7 @@ export default async function StoreDashboard() {
             accent="teal"
           />
           <DashboardCard
-            href="/store/sales"
+            href="/store/sales?filter=today"
             title="Today's Sales"
             value={todaySales._count.id}
             subtitle={formatINR(todaySales._sum.total)}
@@ -184,7 +184,7 @@ export default async function StoreDashboard() {
             accent="green"
           />
           <DashboardCard
-            href="/store/reports"
+            href="/store/sales?filter=month"
             title="Monthly Sales"
             value={monthlySales._count.id}
             subtitle={formatINR(monthlySales._sum.total)}
@@ -201,7 +201,7 @@ export default async function StoreDashboard() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <DashboardCard
-            href="/store/reports"
+            href="/store/sales?filter=all"
             title="Total Revenue"
             value={formatINR(totalRevenue)}
             subtitle={`${allTimeRevenue._count.id} total invoices`}

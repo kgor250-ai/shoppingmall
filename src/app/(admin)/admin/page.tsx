@@ -187,7 +187,7 @@ export default async function AdminDashboard() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <DashboardCard
-            href="/admin/reports"
+            href="/admin/reports?filter=all"
             title="Total Mall Revenue"
             value={formatINR(totalRevenue)}
             subtitle="Gross aggregated sales"
@@ -195,7 +195,7 @@ export default async function AdminDashboard() {
             accent="gold"
           />
           <DashboardCard
-            href="/admin/reports"
+            href="/admin/reports?filter=month"
             title="This Month Sales"
             value={formatINR(currentMonthSales._sum.total)}
             subtitle={`${currentMonthSales._count.id} completed invoices`}
@@ -277,7 +277,7 @@ export default async function AdminDashboard() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <DashboardCard
-            href="/admin/reports"
+            href="/admin/reports?filter=all"
             title="Total Sales Count"
             value={totalSalesCount}
             subtitle="All-time verified receipts"
